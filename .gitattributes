@@ -1,0 +1,7 @@
+# Force LF for shell scripts so they work on Linux
+*.sh text eol=lf
+
+# Force LF for Docker/CI config
+Dockerfile text eol=lf
+*.yml text eol=lf
+nginx.conf text eol=lf
