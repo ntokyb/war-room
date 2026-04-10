@@ -1,24 +1,29 @@
 const Problem = require("../models/Problem");
+const { getPlatformGuide } = require("../constants/platformGuides");
 
-const SYSTEM_PROMPT = `You are a senior engineer and technical interview coach. You generate authentic coding practice problems that precisely mirror real assessments on specific platforms. You MUST respond with ONLY a valid JSON object — no markdown, no backticks, no text outside JSON.
+const SYSTEM_PROMPT = `You are a senior engineer and technical interview coach. You generate authentic coding practice problems that precisely mirror real assessments on specific platforms.
+
+CRITICAL: Each platform has a DISTINCT format, tone, naming convention, and problem structure. You MUST match the platform's actual style — not generic LeetCode-style for everything. A Codility problem looks nothing like a Codewars kata. A HackerRank challenge has different sections than a TestDome assessment. Study the platform guide provided and REPLICATE that exact feel.
+
+You MUST respond with ONLY a valid JSON object — no markdown, no backticks, no text outside JSON.
 
 JSON structure:
 {
-  "title": "Problem title",
+  "title": "Problem title (use platform's naming convention)",
   "difficulty": "Easy|Medium|Hard",
-  "platformNotes": "How this platform scores this type of problem",
-  "description": "Full problem statement with examples and sample input/output",
-  "constraints": ["constraint 1", "constraint 2"],
+  "platformNotes": "How this platform specifically scores/evaluates this type of problem. Include platform-specific tags, kyu ranks, scoring percentages, or related topics as appropriate.",
+  "description": "Full problem statement formatted EXACTLY as this platform presents problems — match their section structure, tone, input/output format, and example style.",
+  "constraints": ["constraint 1 in platform's notation style", "constraint 2"],
   "realWorldContext": "Where a real dev would encounter this",
   "ideSetup": ["Step 1", "Step 2", "Step 3"],
   "thinkingProcess": ["Question 1", "Question 2", "Question 3", "Question 4"],
   "steps": [
-    { "step": 1, "title": "Step title", "explanation": "Why we do this", "code": "// code" },
+    { "step": 1, "title": "Step title", "explanation": "Why we do this", "code": "// code matching platform's solution format (function vs class vs stdin)" },
     { "step": 2, "title": "Step title", "explanation": "...", "code": "// code" },
     { "step": 3, "title": "Step title", "explanation": "...", "code": "// code" },
     { "step": 4, "title": "Wire up and test", "explanation": "...", "code": "// full runnable code" }
   ],
-  "fullSolution": "// Complete solution with comments",
+  "fullSolution": "// Complete solution matching platform's expected format",
   "commonMistakes": ["Mistake 1", "Mistake 2"],
   "complexity": { "time": "O(?) — plain English", "space": "O(?) — plain English" },
   "seniorTip": "One golden insight",
@@ -32,13 +37,14 @@ function buildUserPrompt(
   category,
   difficulty,
 ) {
+  const guide = getPlatformGuide(platform);
   return `Platform: ${platform}
 Language: ${language}
 Category: ${category}
 Difficulty: ${difficulty}
 Platform context: ${platformFocus}
 
-Generate a ${difficulty} ${category} problem in ${language} that authentically mirrors what appears on ${platform}. Return ONLY the JSON.`;
+${guide ? `${guide}\n\n` : ""}Generate a ${difficulty} ${category} problem in ${language} that authentically mirrors what appears on ${platform}. Follow the format rules above EXACTLY. A candidate who uses ${platform} daily should feel like this came from the real platform. Return ONLY the JSON.`;
 }
 
 async function generate(req, res, next) {

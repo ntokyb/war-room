@@ -6,7 +6,8 @@ export const PLATFORMS = [
     icon: "⚙",
     tagline: "Performance-scored. Every ms counts.",
     timeLimit: 30,
-    focus: "Time & space complexity. Correctness + performance = full score.",
+    focus:
+      "PascalCase function names. Scored on correctness (0-100%) + performance (0-100%) separately. Edge cases: empty arrays, single element, N up to 1,000,000.",
     categories: [
       "Arrays",
       "Sorting",
@@ -26,7 +27,7 @@ export const PLATFORMS = [
     tagline: "Domain-wide. Warm up then go deep.",
     timeLimit: 45,
     focus:
-      "Broad coverage. Starts easy, ramps hard. Read constraints carefully.",
+      "Stdin/stdout format. Sections: Input Format, Constraints, Output Format, Sample I/O, Explanation. Constraints use ≤ notation. Multiple test cases.",
     categories: [
       "Warm-up",
       "Implementation",
@@ -46,7 +47,7 @@ export const PLATFORMS = [
     tagline: "Real-world C# scenarios.",
     timeLimit: 35,
     focus:
-      "Practical code. LINQ, async, OOP, EF Core patterns. Not just puzzles.",
+      "Practical code with starter code to fix/complete. Tests LINQ, async, OOP, EF Core patterns. Partial credit scoring. Unit test expectations.",
     categories: [
       "LINQ",
       "Async/Await",
@@ -65,7 +66,8 @@ export const PLATFORMS = [
     icon: "◈",
     tagline: "FAANG gold standard.",
     timeLimit: 40,
-    focus: "Optimal solutions. Know your data structures cold.",
+    focus:
+      "Class Solution with method. Examples numbered: Example 1/2/3. Constraints as bullets. Follow-up for optimization. Related Topics tags.",
     categories: [
       "Two Pointers",
       "Sliding Window",
@@ -84,7 +86,8 @@ export const PLATFORMS = [
     icon: "⟡",
     tagline: "Arcade-style. Speed matters.",
     timeLimit: 20,
-    focus: "Accuracy + speed = score. Start fast, don't choke on edge cases.",
+    focus:
+      "Short clean tasks. camelCase names. [input]/[output] parameter blocks. Guaranteed constraints. Speed-scored. Standalone functions.",
     categories: [
       "Arcade",
       "Arrays",
@@ -103,7 +106,8 @@ export const PLATFORMS = [
     icon: "◭",
     tagline: "Competitive-style problems.",
     timeLimit: 45,
-    focus: "I/O heavy. Read stdin, write stdout. Edge cases are brutal.",
+    focus:
+      "Competitive programming. Multiple test cases (T). Stdin/stdout. Time Limit: 2s, Memory: 256MB. Fast I/O required for large N.",
     categories: [
       "Basic Programming",
       "Arrays",
@@ -122,7 +126,8 @@ export const PLATFORMS = [
     icon: "◫",
     tagline: "Company screening. Practical problems.",
     timeLimit: 30,
-    focus: "Real company assessments. Mix of algorithms and practical tasks.",
+    focus:
+      "Company screening assessments. 'Have the function X(str) take the str parameter...' style. Mix of algorithms and practical parsing. Returns result, never prints.",
     categories: [
       "Arrays",
       "Strings",
@@ -141,7 +146,8 @@ export const PLATFORMS = [
     icon: "⛩",
     tagline: "Kata mastery. Community-driven.",
     timeLimit: 25,
-    focus: "Elegant solutions rewarded. Think functional, think clean.",
+    focus:
+      "Kata format. Kyu-ranked (8=easy, 1=hard). Creative descriptions. Values elegance and functional style. Test.assertEquals assertions.",
     categories: [
       "Fundamentals",
       "Arrays",

@@ -5,6 +5,7 @@ export default function Header({
   onHistory,
   onHome,
   onScreening,
+  onMock,
   screen,
 }) {
   const navBtnStyle = (active) => ({
@@ -79,6 +80,15 @@ export default function Header({
           )}
         >
           SCREENING
+        </button>
+        <button
+          type="button"
+          onClick={onMock}
+          style={navBtnStyle(
+            screen === "mockConfig" || screen === "mockSession",
+          )}
+        >
+          MOCK
         </button>
       </div>
       <div

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { SCREENING_DIFFICULTIES } from "../constants/screening.js";
+import { exportScreeningMarkdown } from "../utils/export.js";
 import CodeBlock from "./CodeBlock.jsx";
 import CollapsibleSection from "./CollapsibleSection.jsx";
 
@@ -156,6 +157,23 @@ export default function ScreeningView({
           }}
         >
           {showAnswer ? "✓ REVEALED" : "SHOW ANSWER"}
+        </button>
+        <button
+          type="button"
+          onClick={() => exportScreeningMarkdown(question, category, type)}
+          style={{
+            background: "#111118",
+            border: "1px solid #2a2a3e",
+            color: "#888",
+            borderRadius: "6px",
+            padding: "10px 20px",
+            cursor: "pointer",
+            fontSize: "12px",
+            fontWeight: 600,
+            letterSpacing: "1px",
+          }}
+        >
+          ↓ EXPORT .MD
         </button>
         <button
           type="button"

@@ -1,5 +1,7 @@
 import { useState } from "react";
 import Header from "./components/Header.jsx";
+import MockConfig from "./components/MockConfig.jsx";
+import MockSession from "./components/MockSession.jsx";
 import PlatformSelect from "./components/PlatformSelect.jsx";
 import ProblemConfig from "./components/ProblemConfig.jsx";
 import ProblemHistory from "./components/ProblemHistory.jsx";
@@ -17,6 +19,7 @@ export default function App() {
   const [screeningQuestion, setScreeningQuestion] = useState(null);
   const [screeningCategory, setScreeningCategory] = useState(null);
   const [screeningType, setScreeningType] = useState(null);
+  const [mockConfig, setMockConfig] = useState(null);
   const { stats, markSolved, markHinted, markSkipped } = useStats();
   const timer = useTimer();
 
@@ -95,6 +98,22 @@ export default function App() {
     timer.start();
   };
 
+  const handleMock = () => {
+    setMockConfig(null);
+    timer.stop();
+    setScreen("mockConfig");
+  };
+
+  const handleMockStart = (config) => {
+    setMockConfig(config);
+    setScreen("mockSession");
+  };
+
+  const handleMockFinish = () => {
+    setMockConfig(null);
+    setScreen("platform");
+  };
+
   return (
     <div
       style={{ minHeight: "100%", display: "flex", flexDirection: "column" }}
@@ -106,6 +125,7 @@ export default function App() {
         onHistory={handleViewHistory}
         onHome={handleBackToPlatforms}
         onScreening={handleScreening}
+        onMock={handleMock}
         screen={screen}
       />
       {screen === "platform" && (
@@ -151,6 +171,12 @@ export default function App() {
           timer={timer}
           onNext={handleNextScreening}
         />
+      )}
+      {screen === "mockConfig" && (
+        <MockConfig onStart={handleMockStart} onBack={handleBackToPlatforms} />
+      )}
+      {screen === "mockSession" && mockConfig && (
+        <MockSession config={mockConfig} onFinish={handleMockFinish} />
       )}
     </div>
   );
