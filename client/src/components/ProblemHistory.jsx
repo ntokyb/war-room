@@ -11,10 +11,17 @@ import {
   getScreenings,
   getScreeningById,
 } from "../services/api.js";
+import {
+  colors,
+  sizes,
+  styles,
+  filterBtnStyle,
+  backBtnStyle,
+  tagStyle,
+  pillStyle,
+} from "../theme/tokens.js";
 import ProblemCard from "./ProblemCard.jsx";
 import LoadingSpinner from "./LoadingSpinner.jsx";
-
-const ALL_OPTION = { id: "", label: "All" };
 
 export default function ProblemHistory({
   onViewProblem,
@@ -147,49 +154,24 @@ export default function ProblemHistory({
     }
   };
 
-  const filterBtnStyle = (active, color) => ({
-    background: active ? `${color}18` : "#111118",
-    border: `1px solid ${active ? color : "#1e1e30"}`,
-    borderRadius: "6px",
-    padding: "6px 12px",
-    cursor: "pointer",
-    color: active ? color : "#555",
-    fontSize: "11px",
-    fontWeight: 600,
-  });
-
   return (
-    <main style={{ maxWidth: "820px", margin: "0 auto", padding: "32px 20px" }}>
-      <button
-        type="button"
-        onClick={onBack}
-        style={{
-          background: "transparent",
-          border: "1px solid #2a2a3e",
-          color: "#666",
-          borderRadius: "6px",
-          padding: "8px 14px",
-          cursor: "pointer",
-          fontSize: "11px",
-          letterSpacing: "2px",
-          marginBottom: "20px",
-        }}
-      >
+    <main style={styles.mainLayout}>
+      <button type="button" onClick={onBack} style={backBtnStyle()}>
         ← BACK
       </button>
 
-      <div style={{ marginBottom: "24px" }}>
+      <div style={{ marginBottom: sizes.spacing2xl }}>
         <div
           style={{
-            fontSize: "20px",
+            fontSize: sizes.fontTitle,
             fontWeight: 700,
-            color: "#e0e0f0",
+            color: colors.text,
             marginBottom: "4px",
           }}
         >
           History
         </div>
-        <div style={{ fontSize: "12px", color: "#555" }}>
+        <div style={{ fontSize: sizes.fontBase, color: colors.textGhost }}>
           {tab === "problems"
             ? `${total} saved problem${total !== 1 ? "s" : ""}`
             : `${screeningTotal} saved screening question${screeningTotal !== 1 ? "s" : ""}`}{" "}
@@ -198,20 +180,20 @@ export default function ProblemHistory({
       </div>
 
       {/* Tabs */}
-      <div style={{ display: "flex", gap: "8px", marginBottom: "24px" }}>
+      <div
+        style={{
+          display: "flex",
+          gap: sizes.spacingSm,
+          marginBottom: sizes.spacing2xl,
+        }}
+      >
         <button
           type="button"
           onClick={() => setTab("problems")}
           style={{
-            background: tab === "problems" ? "#00ff8815" : "#111118",
-            border: `1px solid ${tab === "problems" ? "#00ff88" : "#1e1e30"}`,
-            borderRadius: "6px",
-            padding: "8px 18px",
-            cursor: "pointer",
-            color: tab === "problems" ? "#00ff88" : "#555",
-            fontSize: "11px",
-            fontWeight: 700,
+            ...pillStyle(tab === "problems", colors.primary),
             letterSpacing: "2px",
+            fontWeight: 700,
           }}
         >
           ⬡ PROBLEMS
@@ -220,15 +202,9 @@ export default function ProblemHistory({
           type="button"
           onClick={() => setTab("screening")}
           style={{
-            background: tab === "screening" ? "#00c2ff15" : "#111118",
-            border: `1px solid ${tab === "screening" ? "#00c2ff" : "#1e1e30"}`,
-            borderRadius: "6px",
-            padding: "8px 18px",
-            cursor: "pointer",
-            color: tab === "screening" ? "#00c2ff" : "#555",
-            fontSize: "11px",
-            fontWeight: 700,
+            ...pillStyle(tab === "screening", colors.info),
             letterSpacing: "2px",
+            fontWeight: 700,
           }}
         >
           🎯 SCREENING
@@ -239,29 +215,28 @@ export default function ProblemHistory({
       {tab === "problems" && (
         <div
           style={{
-            marginBottom: "24px",
+            marginBottom: sizes.spacing2xl,
             display: "flex",
             flexDirection: "column",
-            gap: "12px",
+            gap: sizes.spacingMd,
           }}
         >
           {/* Platform filter */}
           <div>
-            <div
-              style={{
-                fontSize: "10px",
-                color: "#444",
-                letterSpacing: "2px",
-                marginBottom: "6px",
-              }}
-            >
+            <div style={{ ...styles.label, marginBottom: sizes.spacingXs }}>
               PLATFORM
             </div>
-            <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
+            <div
+              style={{
+                display: "flex",
+                gap: sizes.spacingXs,
+                flexWrap: "wrap",
+              }}
+            >
               <button
                 type="button"
                 onClick={() => setPlatform("")}
-                style={filterBtnStyle(!platform, "#00ff88")}
+                style={filterBtnStyle(!platform, colors.primary)}
               >
                 All
               </button>
@@ -280,21 +255,20 @@ export default function ProblemHistory({
 
           {/* Language filter */}
           <div>
-            <div
-              style={{
-                fontSize: "10px",
-                color: "#444",
-                letterSpacing: "2px",
-                marginBottom: "6px",
-              }}
-            >
+            <div style={{ ...styles.label, marginBottom: sizes.spacingXs }}>
               LANGUAGE
             </div>
-            <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
+            <div
+              style={{
+                display: "flex",
+                gap: sizes.spacingXs,
+                flexWrap: "wrap",
+              }}
+            >
               <button
                 type="button"
                 onClick={() => setLanguage("")}
-                style={filterBtnStyle(!language, "#00ff88")}
+                style={filterBtnStyle(!language, colors.primary)}
               >
                 All
               </button>
@@ -313,21 +287,20 @@ export default function ProblemHistory({
 
           {/* Difficulty filter */}
           <div>
-            <div
-              style={{
-                fontSize: "10px",
-                color: "#444",
-                letterSpacing: "2px",
-                marginBottom: "6px",
-              }}
-            >
+            <div style={{ ...styles.label, marginBottom: sizes.spacingXs }}>
               DIFFICULTY
             </div>
-            <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
+            <div
+              style={{
+                display: "flex",
+                gap: sizes.spacingXs,
+                flexWrap: "wrap",
+              }}
+            >
               <button
                 type="button"
                 onClick={() => setDifficulty("")}
-                style={filterBtnStyle(!difficulty, "#00ff88")}
+                style={filterBtnStyle(!difficulty, colors.primary)}
               >
                 All
               </button>
@@ -350,29 +323,28 @@ export default function ProblemHistory({
       {tab === "screening" && (
         <div
           style={{
-            marginBottom: "24px",
+            marginBottom: sizes.spacing2xl,
             display: "flex",
             flexDirection: "column",
-            gap: "12px",
+            gap: sizes.spacingMd,
           }}
         >
           {/* Category filter */}
           <div>
-            <div
-              style={{
-                fontSize: "10px",
-                color: "#444",
-                letterSpacing: "2px",
-                marginBottom: "6px",
-              }}
-            >
+            <div style={{ ...styles.label, marginBottom: sizes.spacingXs }}>
               CATEGORY
             </div>
-            <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
+            <div
+              style={{
+                display: "flex",
+                gap: sizes.spacingXs,
+                flexWrap: "wrap",
+              }}
+            >
               <button
                 type="button"
                 onClick={() => setScrCategory("")}
-                style={filterBtnStyle(!scrCategory, "#00c2ff")}
+                style={filterBtnStyle(!scrCategory, colors.info)}
               >
                 All
               </button>
@@ -391,21 +363,20 @@ export default function ProblemHistory({
 
           {/* Type filter */}
           <div>
-            <div
-              style={{
-                fontSize: "10px",
-                color: "#444",
-                letterSpacing: "2px",
-                marginBottom: "6px",
-              }}
-            >
+            <div style={{ ...styles.label, marginBottom: sizes.spacingXs }}>
               TYPE
             </div>
-            <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
+            <div
+              style={{
+                display: "flex",
+                gap: sizes.spacingXs,
+                flexWrap: "wrap",
+              }}
+            >
               <button
                 type="button"
                 onClick={() => setScrType("")}
-                style={filterBtnStyle(!scrType, "#00c2ff")}
+                style={filterBtnStyle(!scrType, colors.info)}
               >
                 All
               </button>
@@ -424,21 +395,20 @@ export default function ProblemHistory({
 
           {/* Difficulty filter */}
           <div>
-            <div
-              style={{
-                fontSize: "10px",
-                color: "#444",
-                letterSpacing: "2px",
-                marginBottom: "6px",
-              }}
-            >
+            <div style={{ ...styles.label, marginBottom: sizes.spacingXs }}>
               DIFFICULTY
             </div>
-            <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
+            <div
+              style={{
+                display: "flex",
+                gap: sizes.spacingXs,
+                flexWrap: "wrap",
+              }}
+            >
               <button
                 type="button"
                 onClick={() => setScrDifficulty("")}
-                style={filterBtnStyle(!scrDifficulty, "#00c2ff")}
+                style={filterBtnStyle(!scrDifficulty, colors.info)}
               >
                 All
               </button>
@@ -458,7 +428,11 @@ export default function ProblemHistory({
       )}
 
       <div
-        style={{ height: "1px", background: "#1e1e2e", marginBottom: "24px" }}
+        style={{
+          height: "1px",
+          background: colors.border,
+          marginBottom: sizes.spacing2xl,
+        }}
       />
 
       {/* Content */}
@@ -473,8 +447,8 @@ export default function ProblemHistory({
       {error && (
         <div
           style={{
-            color: "#ff5e7a",
-            fontSize: "12px",
+            color: colors.error,
+            fontSize: sizes.fontBase,
             textAlign: "center",
             padding: "40px 0",
           }}
@@ -487,10 +461,16 @@ export default function ProblemHistory({
       {tab === "problems" && !loading && !error && problems.length === 0 && (
         <div style={{ textAlign: "center", padding: "60px 20px" }}>
           <div style={{ fontSize: "32px", marginBottom: "12px" }}>⬡</div>
-          <div style={{ color: "#555", fontSize: "13px" }}>
+          <div style={{ color: colors.textGhost, fontSize: sizes.fontMd }}>
             No problems saved yet.
           </div>
-          <div style={{ color: "#444", fontSize: "11px", marginTop: "6px" }}>
+          <div
+            style={{
+              color: colors.textDark,
+              fontSize: sizes.fontSm,
+              marginTop: sizes.spacingXs,
+            }}
+          >
             Generate some problems first — they auto-save.
           </div>
         </div>
@@ -508,10 +488,16 @@ export default function ProblemHistory({
       {tab === "screening" && !loading && !error && screenings.length === 0 && (
         <div style={{ textAlign: "center", padding: "60px 20px" }}>
           <div style={{ fontSize: "32px", marginBottom: "12px" }}>🎯</div>
-          <div style={{ color: "#555", fontSize: "13px" }}>
+          <div style={{ color: colors.textGhost, fontSize: sizes.fontMd }}>
             No screening questions saved yet.
           </div>
-          <div style={{ color: "#444", fontSize: "11px", marginTop: "6px" }}>
+          <div
+            style={{
+              color: colors.textDark,
+              fontSize: sizes.fontSm,
+              marginTop: sizes.spacingXs,
+            }}
+          >
             Generate some screening questions first — they auto-save.
           </div>
         </div>
@@ -539,10 +525,8 @@ export default function ProblemHistory({
                 type="button"
                 onClick={() => handleScreeningCardClick(s.id)}
                 style={{
-                  background: "#111118",
-                  border: "1px solid #1e1e30",
-                  borderRadius: "8px",
-                  padding: "16px",
+                  ...styles.cardBox,
+                  padding: sizes.spacingLg,
                   cursor: "pointer",
                   textAlign: "left",
                   width: "100%",
@@ -553,8 +537,8 @@ export default function ProblemHistory({
                   e.currentTarget.style.background = `${catColor}08`;
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = "#1e1e30";
-                  e.currentTarget.style.background = "#111118";
+                  e.currentTarget.style.borderColor = colors.border;
+                  e.currentTarget.style.background = colors.bgCard;
                 }}
               >
                 <div
@@ -562,22 +546,22 @@ export default function ProblemHistory({
                     display: "flex",
                     justifyContent: "space-between",
                     alignItems: "flex-start",
-                    marginBottom: "8px",
+                    marginBottom: sizes.spacingSm,
                   }}
                 >
                   <div
                     style={{
                       display: "flex",
                       alignItems: "center",
-                      gap: "8px",
+                      gap: sizes.spacingSm,
                     }}
                   >
-                    <span style={{ fontSize: "16px", color: catColor }}>
+                    <span style={{ fontSize: sizes.fontLg, color: catColor }}>
                       {catIcon}
                     </span>
                     <span
                       style={{
-                        fontSize: "11px",
+                        fontSize: sizes.fontSm,
                         color: catColor,
                         letterSpacing: "1px",
                         fontWeight: 700,
@@ -586,54 +570,42 @@ export default function ProblemHistory({
                       {s.category}
                     </span>
                   </div>
-                  <span style={{ fontSize: "10px", color: "#444" }}>
+                  <span
+                    style={{ fontSize: sizes.fontXs, color: colors.textDark }}
+                  >
                     {date}
                   </span>
                 </div>
 
                 <div
                   style={{
-                    fontSize: "14px",
+                    fontSize: sizes.fontLg,
                     fontWeight: 600,
-                    color: "#e0e0f0",
-                    marginBottom: "10px",
+                    color: colors.text,
+                    marginBottom: sizes.spacingMd,
                     lineHeight: 1.4,
                   }}
                 >
                   {q?.title || s.title || "Untitled Question"}
                 </div>
 
-                <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
-                  <span
-                    style={{
-                      fontSize: "10px",
-                      padding: "3px 8px",
-                      borderRadius: "4px",
-                      background: `${diffObj?.color ?? "#888"}15`,
-                      color: diffObj?.color ?? "#888",
-                      fontWeight: 600,
-                    }}
-                  >
+                <div
+                  style={{
+                    display: "flex",
+                    gap: sizes.spacingSm,
+                    flexWrap: "wrap",
+                  }}
+                >
+                  <span style={tagStyle(diffObj?.color ?? colors.textFaint)}>
                     {s.difficulty}
                   </span>
-                  <span
-                    style={{
-                      fontSize: "10px",
-                      padding: "3px 8px",
-                      borderRadius: "4px",
-                      background: `${typeObj?.color ?? "#888"}15`,
-                      color: typeObj?.color ?? "#888",
-                    }}
-                  >
+                  <span style={tagStyle(typeObj?.color ?? colors.textFaint)}>
                     {typeObj?.icon} {typeObj?.name ?? s.type}
                   </span>
                   <span
                     style={{
-                      fontSize: "10px",
-                      padding: "3px 8px",
-                      borderRadius: "4px",
+                      ...tagStyle(colors.textFaint),
                       background: "#1a1a2e",
-                      color: "#888",
                     }}
                   >
                     {s.topic}

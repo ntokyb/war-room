@@ -12,12 +12,43 @@ function downloadFile(filename, content) {
   URL.revokeObjectURL(url);
 }
 
-export function exportProblemMarkdown(problem, platform, language) {
-  const lines = [];
-  const slug = (problem.title || "problem")
+function toSlug(title, fallback = "export") {
+  return (title || fallback)
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/(^-|-$)/g, "");
+}
+
+function pushCodeBlock(lines, code) {
+  lines.push("```");
+  lines.push(code);
+  lines.push("```");
+  lines.push("");
+}
+
+function pushHints(lines, hints) {
+  if (!hints?.length) return;
+  lines.push("## Hints");
+  lines.push("");
+  hints.forEach((h, i) =>
+    lines.push(
+      `<details><summary>Hint ${i + 1}</summary>\n\n${h}\n\n</details>`,
+    ),
+  );
+  lines.push("");
+}
+
+function pushSeniorTip(lines, tip) {
+  if (!tip) return;
+  lines.push("## Senior Tip");
+  lines.push("");
+  lines.push(`> "${tip}"`);
+  lines.push("");
+}
+
+export function exportProblemMarkdown(problem, platform, language) {
+  const lines = [];
+  const slug = toSlug(problem.title, "problem");
 
   lines.push(`# ${problem.title}`);
   lines.push("");
@@ -65,16 +96,7 @@ export function exportProblemMarkdown(problem, platform, language) {
     lines.push("");
   }
 
-  if (problem.hints?.length) {
-    lines.push("## Hints");
-    lines.push("");
-    problem.hints.forEach((h, i) =>
-      lines.push(
-        `<details><summary>Hint ${i + 1}</summary>\n\n${h}\n\n</details>`,
-      ),
-    );
-    lines.push("");
-  }
+  pushHints(lines, problem.hints);
 
   if (problem.steps?.length) {
     lines.push("## Step-by-Step Solution");
@@ -84,22 +106,14 @@ export function exportProblemMarkdown(problem, platform, language) {
       lines.push("");
       lines.push(s.explanation);
       lines.push("");
-      if (s.code) {
-        lines.push("```");
-        lines.push(s.code);
-        lines.push("```");
-        lines.push("");
-      }
+      if (s.code) pushCodeBlock(lines, s.code);
     });
   }
 
   if (problem.fullSolution) {
     lines.push("## Full Solution");
     lines.push("");
-    lines.push("```");
-    lines.push(problem.fullSolution);
-    lines.push("```");
-    lines.push("");
+    pushCodeBlock(lines, problem.fullSolution);
   }
 
   if (problem.complexity) {
@@ -117,22 +131,14 @@ export function exportProblemMarkdown(problem, platform, language) {
     lines.push("");
   }
 
-  if (problem.seniorTip) {
-    lines.push("## Senior Tip");
-    lines.push("");
-    lines.push(`> "${problem.seniorTip}"`);
-    lines.push("");
-  }
+  pushSeniorTip(lines, problem.seniorTip);
 
   downloadFile(`${slug}.md`, lines.join("\n"));
 }
 
 export function exportScreeningMarkdown(question, category, type) {
   const lines = [];
-  const slug = (question.title || "screening")
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "");
+  const slug = toSlug(question.title, "screening");
 
   lines.push(`# ${question.title}`);
   lines.push("");
@@ -154,22 +160,10 @@ export function exportScreeningMarkdown(question, category, type) {
   if (question.codeSnippet) {
     lines.push("### Code to Review");
     lines.push("");
-    lines.push("```");
-    lines.push(question.codeSnippet);
-    lines.push("```");
-    lines.push("");
+    pushCodeBlock(lines, question.codeSnippet);
   }
 
-  if (question.hints?.length) {
-    lines.push("## Hints");
-    lines.push("");
-    question.hints.forEach((h, i) =>
-      lines.push(
-        `<details><summary>Hint ${i + 1}</summary>\n\n${h}\n\n</details>`,
-      ),
-    );
-    lines.push("");
-  }
+  pushHints(lines, question.hints);
 
   lines.push("---");
   lines.push("");
@@ -188,10 +182,7 @@ export function exportScreeningMarkdown(question, category, type) {
     if (question.answer.codeExample) {
       lines.push("## Code Example");
       lines.push("");
-      lines.push("```");
-      lines.push(question.answer.codeExample);
-      lines.push("```");
-      lines.push("");
+      pushCodeBlock(lines, question.answer.codeExample);
     }
 
     if (question.answer.realWorldScenario) {
@@ -225,12 +216,7 @@ export function exportScreeningMarkdown(question, category, type) {
     lines.push("");
   }
 
-  if (question.seniorTip) {
-    lines.push("## Senior Tip");
-    lines.push("");
-    lines.push(`> "${question.seniorTip}"`);
-    lines.push("");
-  }
+  pushSeniorTip(lines, question.seniorTip);
 
   downloadFile(`${slug}.md`, lines.join("\n"));
 }

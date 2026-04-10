@@ -1,5 +1,27 @@
 // All HTTP calls live here — never fetch() directly in components
 
+class ApiError extends Error {
+  constructor(status, statusText, url) {
+    const messages = {
+      400: "Bad request — check your input",
+      404: "Not found",
+      429: "Rate limited — slow down",
+      500: "Server error — try again",
+      502: "Server unreachable",
+      503: "Service unavailable — try again later",
+    };
+    super(messages[status] || `Request failed (${status} ${statusText})`);
+    this.status = status;
+    this.url = url;
+  }
+}
+
+async function request(url, options) {
+  const res = await fetch(url, options);
+  if (!res.ok) throw new ApiError(res.status, res.statusText, url);
+  return res.json();
+}
+
 export async function generateProblem({
   platform,
   platformFocus,
@@ -8,7 +30,7 @@ export async function generateProblem({
   difficulty,
   forceNew,
 }) {
-  const res = await fetch("/api/problem", {
+  return request("/api/problem", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -20,21 +42,15 @@ export async function generateProblem({
       forceNew,
     }),
   });
-  if (!res.ok) throw new Error("API request failed");
-  return res.json();
 }
 
 export async function getProblems(filters = {}) {
   const params = new URLSearchParams(filters).toString();
-  const res = await fetch(`/api/problems?${params}`);
-  if (!res.ok) throw new Error("Failed to fetch problems");
-  return res.json();
+  return request(`/api/problems?${params}`);
 }
 
 export async function getProblemById(id) {
-  const res = await fetch(`/api/problems/${id}`);
-  if (!res.ok) throw new Error("Failed to fetch problem");
-  return res.json();
+  return request(`/api/problems/${encodeURIComponent(id)}`);
 }
 
 export async function generateScreening({
@@ -44,24 +60,18 @@ export async function generateScreening({
   difficulty,
   forceNew,
 }) {
-  const res = await fetch("/api/screening", {
+  return request("/api/screening", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ category, topic, type, difficulty, forceNew }),
   });
-  if (!res.ok) throw new Error("Screening API request failed");
-  return res.json();
 }
 
 export async function getScreenings(filters = {}) {
   const params = new URLSearchParams(filters).toString();
-  const res = await fetch(`/api/screenings?${params}`);
-  if (!res.ok) throw new Error("Failed to fetch screenings");
-  return res.json();
+  return request(`/api/screenings?${params}`);
 }
 
 export async function getScreeningById(id) {
-  const res = await fetch(`/api/screenings/${id}`);
-  if (!res.ok) throw new Error("Failed to fetch screening");
-  return res.json();
+  return request(`/api/screenings/${encodeURIComponent(id)}`);
 }

@@ -1,9 +1,8 @@
 const { getDb } = require("../config/db");
-const crypto = require("crypto");
+const { generateHash: hash } = require("../utils/hash");
 
 function generateHash(category, topic, type, difficulty) {
-  const key = `screening|${category}|${topic}|${type}|${difficulty}`;
-  return crypto.createHash("sha256").update(key).digest("hex");
+  return hash("screening", category, topic, type, difficulty);
 }
 
 function findCached(category, topic, type, difficulty) {

@@ -1,5 +1,7 @@
-// Client-side prompts kept for reference / fallback — actual prompt logic lives in server/controllers/problemController.js
+// REFERENCE ONLY — not imported anywhere.
+// Actual prompt logic lives in server/controllers/problemController.js
 // The server uses platformGuides.js for authentic per-platform formatting.
+// This file documents the expected JSON schema for problem responses.
 
 export const SYSTEM_PROMPT = `You are a senior engineer and technical interview coach. You generate authentic coding practice problems that precisely mirror real assessments on specific platforms.
 
