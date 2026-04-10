@@ -1,19 +1,14 @@
 name: Deploy
-
 on:
   push:
     branches: [main]
-
-# Prevent concurrent deployments
 concurrency:
   group: deploy-production
   cancel-in-progress: false
-
 jobs:
   ci:
     name: Run CI
     uses: ./.github/workflows/ci.yml
-
   deploy:
     name: Deploy to Server
     runs-on: ubuntu-latest
@@ -21,7 +16,6 @@ jobs:
     environment: production
     steps:
       - uses: actions/checkout@v4
-
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1
         with:
@@ -30,19 +24,15 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
             set -e
-
             APP_DIR="${{ secrets.APP_DIR || '/opt/warroom' }}"
-
-            # Pull latest code
             cd "$APP_DIR"
             git fetch origin main
             git reset --hard origin/main
-
-            # Rebuild & restart containers
-            docker compose build --no-cache
-            docker compose up -d
-
-            # Cleanup old images
+            docker compose -f docker-compose.yml \
+              -f docker-compose.prod.yml \
+              build --no-cache
+            docker compose -f docker-compose.yml \
+              -f docker-compose.prod.yml \
+              up -d
             docker image prune -f
-
             echo "✓ Deployed $(git rev-parse --short HEAD) at $(date)"
