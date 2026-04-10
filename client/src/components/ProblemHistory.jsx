@@ -43,27 +43,28 @@ export default function ProblemHistory({
   useEffect(() => {
     if (tab !== "problems") return;
     let cancelled = false;
-    setLoading(true);
-    setError(null);
 
-    const filters = {};
-    if (platform) filters.platform = platform;
-    if (language) filters.language = language;
-    if (difficulty) filters.difficulty = difficulty;
+    (async () => {
+      setLoading(true);
+      setError(null);
 
-    getProblems(filters)
-      .then((data) => {
+      const filters = {};
+      if (platform) filters.platform = platform;
+      if (language) filters.language = language;
+      if (difficulty) filters.difficulty = difficulty;
+
+      try {
+        const data = await getProblems(filters);
         if (cancelled) return;
         setProblems(data.problems);
         setTotal(data.total);
-      })
-      .catch(() => {
+      } catch {
         if (cancelled) return;
         setError("Failed to load problems. Is the server running?");
-      })
-      .finally(() => {
+      } finally {
         if (!cancelled) setLoading(false);
-      });
+      }
+    })();
 
     return () => {
       cancelled = true;
@@ -74,27 +75,28 @@ export default function ProblemHistory({
   useEffect(() => {
     if (tab !== "screening") return;
     let cancelled = false;
-    setLoading(true);
-    setError(null);
 
-    const filters = {};
-    if (scrCategory) filters.category = scrCategory;
-    if (scrType) filters.type = scrType;
-    if (scrDifficulty) filters.difficulty = scrDifficulty;
+    (async () => {
+      setLoading(true);
+      setError(null);
 
-    getScreenings(filters)
-      .then((data) => {
+      const filters = {};
+      if (scrCategory) filters.category = scrCategory;
+      if (scrType) filters.type = scrType;
+      if (scrDifficulty) filters.difficulty = scrDifficulty;
+
+      try {
+        const data = await getScreenings(filters);
         if (cancelled) return;
         setScreenings(data.questions);
         setScreeningTotal(data.total);
-      })
-      .catch(() => {
+      } catch {
         if (cancelled) return;
         setError("Failed to load screening questions. Is the server running?");
-      })
-      .finally(() => {
+      } finally {
         if (!cancelled) setLoading(false);
-      });
+      }
+    })();
 
     return () => {
       cancelled = true;
