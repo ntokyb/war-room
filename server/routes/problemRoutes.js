@@ -1,0 +1,14 @@
+const express = require("express");
+const router = express.Router();
+const { generate, list, getById } = require("../controllers/problemController");
+
+// POST /api/problem — generate (cache-first) or force new
+router.post("/problem", generate);
+
+// GET /api/problems — list all cached problems (filterable)
+router.get("/problems", list);
+
+// GET /api/problems/:id — get a single cached problem
+router.get("/problems/:id", getById);
+
+module.exports = router;
