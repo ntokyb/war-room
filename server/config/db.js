@@ -52,6 +52,24 @@ function initDb() {
 
     CREATE INDEX IF NOT EXISTS idx_screening_hash ON screening(prompt_hash);
     CREATE INDEX IF NOT EXISTS idx_screening_lookup ON screening(category, type, difficulty);
+
+    CREATE TABLE IF NOT EXISTS sessions (
+      id           INTEGER PRIMARY KEY AUTOINCREMENT,
+      platform     TEXT NOT NULL,
+      language     TEXT NOT NULL,
+      category     TEXT NOT NULL,
+      difficulty   TEXT NOT NULL,
+      outcome      TEXT NOT NULL CHECK(outcome IN ('solved','skipped','hinted')),
+      hints_used   INTEGER NOT NULL DEFAULT 0,
+      time_seconds INTEGER NOT NULL DEFAULT 0,
+      problem_id   INTEGER,
+      created_at   TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_sessions_platform    ON sessions(platform);
+    CREATE INDEX IF NOT EXISTS idx_sessions_difficulty   ON sessions(difficulty);
+    CREATE INDEX IF NOT EXISTS idx_sessions_created_at  ON sessions(created_at);
+    CREATE INDEX IF NOT EXISTS idx_sessions_outcome     ON sessions(outcome);
   `);
 
   console.log("Database initialized at", DB_PATH);

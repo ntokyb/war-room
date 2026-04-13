@@ -133,3 +133,94 @@ export async function getScreeningById(
 ): Promise<ScreeningDetailResponse> {
   return request(`/api/screenings/${encodeURIComponent(String(id))}`);
 }
+
+export type SessionOutcome = "solved" | "skipped" | "hinted";
+
+export type LogSessionPayload = {
+  platform: string;
+  language: string;
+  category: string;
+  difficulty: string;
+  outcome: SessionOutcome;
+  hintsUsed: number;
+  timeSeconds: number;
+  problemId?: number;
+};
+
+/** Fire-and-forget — never throws to callers; failures are logged only */
+export async function logSession(payload: LogSessionPayload): Promise<void> {
+  try {
+    const auth = buildAuthHeaders();
+    const headers = new Headers({ "Content-Type": "application/json" });
+    for (const [k, v] of Object.entries(auth)) {
+      headers.set(k, v);
+    }
+    const res = await fetch("/api/sessions", {
+      method: "POST",
+      headers,
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) {
+      console.warn("[Session] Failed to log session", res.status);
+    }
+  } catch {
+    console.warn("[Session] Failed to log session");
+  }
+}
+
+export type SessionSummaryResponse = {
+  total: number;
+  solved: number;
+  skipped: number;
+  hinted: number;
+  avg_time_seconds: number;
+  last_activity: string | null;
+  streak: number;
+};
+
+export async function fetchSummary(): Promise<SessionSummaryResponse> {
+  return request<SessionSummaryResponse>("/api/sessions/summary");
+}
+
+export type DashboardResponse = {
+  summary: SessionSummaryResponse;
+  byPlatform: Array<{
+    platform: string;
+    total: number;
+    solved: number;
+    skipped: number;
+    avg_time_seconds: number;
+    solve_rate: number;
+  }>;
+  byCategory: Array<{
+    category: string;
+    platform: string;
+    total: number;
+    solved: number;
+    solve_rate: number;
+  }>;
+  weakSpots: Array<{
+    category: string;
+    platform: string;
+    total: number;
+    solved: number;
+    solve_rate: number;
+  }>;
+  dailyActivity: Array<{ date: string; total: number; solved: number }>;
+  recent: Array<{
+    id: number;
+    platform: string;
+    language: string;
+    category: string;
+    difficulty: string;
+    outcome: SessionOutcome;
+    hints_used: number;
+    time_seconds: number;
+    problem_id: number | null;
+    created_at: string;
+  }>;
+};
+
+export async function fetchDashboard(): Promise<DashboardResponse> {
+  return request<DashboardResponse>("/api/sessions/dashboard");
+}

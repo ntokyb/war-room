@@ -68,6 +68,9 @@ type ProblemHistoryProps = {
     problem: Problem;
     platform: Platform;
     language: Language;
+    category: string;
+    difficulty: string;
+    problemId: number;
   }) => void;
   onViewScreening: (p: {
     question: ScreeningQuestion;
@@ -175,6 +178,9 @@ export default function ProblemHistory({
         language:
           LANGUAGES.find((l) => l.name === data.language) ??
           stubLanguage(data.language),
+        category: data.category,
+        difficulty: data.difficulty,
+        problemId: data.id,
       });
     } catch {
       setError("Failed to load problem details.");

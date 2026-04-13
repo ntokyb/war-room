@@ -10,36 +10,83 @@ import { suggestedIdeMinutes } from "../utils/suggestedIdeMinutes";
 import ProblemActions from "./ProblemActions";
 import SolutionDetails from "./SolutionDetails";
 import SeniorWisdom from "./SeniorWisdom";
+import { logSession } from "../services/api";
+import type { Language, Platform, Problem } from "../types/domain";
+import type { UseTimerReturn } from "../hooks/useTimer";
+
+type ProblemViewProps = {
+  problem: Problem;
+  platform: Platform;
+  language: Language;
+  timer: UseTimerReturn;
+  category: string;
+  difficulty: string;
+  problemId?: number;
+  markSolved: () => void;
+  markHinted: () => void;
+  markSkipped: () => void;
+  onNext: () => void;
+};
 
 export default function ProblemView({
   problem,
   platform,
   language,
   timer,
+  category,
+  difficulty,
+  problemId,
   markSolved,
   markHinted,
   markSkipped,
   onNext,
-}) {
+}: ProblemViewProps) {
   const [revealedHints, setRevealedHints] = useState<string[]>([]);
   const [hintIndex, setHintIndex] = useState(0);
   const [showFull, setShowFull] = useState(false);
 
+  const sessionBase = () => ({
+    platform: platform.name,
+    language: language.name,
+    category,
+    difficulty,
+    timeSeconds: timer.seconds,
+    problemId,
+  });
+
   const handleRevealHint = () => {
-    if (!problem?.hints?.length) return;
-    if (hintIndex >= problem.hints.length) return;
-    if (revealedHints.length === 0) markHinted();
-    setRevealedHints((prev) => [...prev, problem.hints[hintIndex]]);
+    const hints = problem.hints;
+    if (!hints?.length) return;
+    if (hintIndex >= hints.length) return;
+    if (revealedHints.length === 0) {
+      logSession({
+        ...sessionBase(),
+        outcome: "hinted",
+        hintsUsed: 1,
+      });
+      markHinted();
+    }
+    setRevealedHints((prev) => [...prev, hints[hintIndex]]);
     setHintIndex((i) => i + 1);
   };
 
   const handleSolved = () => {
+    logSession({
+      ...sessionBase(),
+      outcome: "solved",
+      hintsUsed: revealedHints.length,
+    });
     timer.stop();
     markSolved();
     setShowFull(true);
   };
 
   const handleSkip = () => {
+    logSession({
+      ...sessionBase(),
+      outcome: "skipped",
+      hintsUsed: revealedHints.length,
+    });
     timer.stop();
     markSkipped();
     setShowFull(true);

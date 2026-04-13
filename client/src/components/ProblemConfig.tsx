@@ -1,19 +1,46 @@
 import { useEffect, useState } from "react";
 import { DIFFICULTIES, LANGUAGES } from "../constants/platforms";
+import type { Language, Platform, Problem } from "../types/domain";
 import { generateProblem } from "../services/api";
 
-export default function ProblemConfig({ platform, onGenerated, onBack }) {
+type ProblemConfigProps = {
+  platform: Platform;
+  onGenerated: (payload: {
+    problem: Problem;
+    language: Language;
+    category: string;
+    difficulty: string;
+    problemId: number;
+  }) => void;
+  onBack: () => void;
+  initialCategory?: string | null;
+};
+
+export default function ProblemConfig({
+  platform,
+  onGenerated,
+  onBack,
+  initialCategory = null,
+}: ProblemConfigProps) {
   const [language, setLanguage] = useState(LANGUAGES[0]);
-  const [category, setCategory] = useState(platform.categories[0]);
+  const [category, setCategory] = useState(
+    initialCategory && platform.categories.includes(initialCategory)
+      ? initialCategory
+      : platform.categories[0],
+  );
   const [difficulty, setDifficulty] = useState(DIFFICULTIES[0].id);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [forceNew, setForceNew] = useState(false);
 
   useEffect(() => {
-    setCategory(platform.categories[0]);
+    if (initialCategory && platform.categories.includes(initialCategory)) {
+      setCategory(initialCategory);
+    } else {
+      setCategory(platform.categories[0]);
+    }
     setError(null);
-  }, [platform]);
+  }, [platform, initialCategory]);
 
   const handleGenerate = async () => {
     setLoading(true);
@@ -32,7 +59,13 @@ export default function ProblemConfig({ platform, onGenerated, onBack }) {
       if (response.cached) {
         console.log("Loaded from cache (problem #" + response.id + ")");
       }
-      onGenerated({ problem, language });
+      onGenerated({
+        problem,
+        language,
+        category,
+        difficulty,
+        problemId: response.id,
+      });
     } catch (e) {
       setError(
         e instanceof Error

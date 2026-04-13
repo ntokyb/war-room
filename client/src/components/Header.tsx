@@ -2,8 +2,10 @@ export default function Header({
   stats,
   timer,
   showTimer,
+  onDashboard,
   onHistory,
   onHome,
+  onPrepGuide,
   onScreening,
   onMock,
   screen,
@@ -56,6 +58,13 @@ export default function Header({
         <span style={{ color: "#333", fontSize: "10px" }}>│</span>
         <button
           type="button"
+          onClick={onDashboard}
+          style={navBtnStyle(screen === "dashboard")}
+        >
+          DASHBOARD
+        </button>
+        <button
+          type="button"
           onClick={onHome}
           style={navBtnStyle(
             screen === "platform" ||
@@ -71,6 +80,13 @@ export default function Header({
           style={navBtnStyle(screen === "history")}
         >
           HISTORY
+        </button>
+        <button
+          type="button"
+          onClick={onPrepGuide}
+          style={navBtnStyle(screen === "prep")}
+        >
+          PREP GUIDE
         </button>
         <button
           type="button"

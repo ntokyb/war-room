@@ -44,5 +44,5 @@ export function useStats() {
   const markSkipped = () =>
     setStats((s) => ({ ...s, skipped: s.skipped + 1, streak: 0 }));
 
-  return { stats, markSolved, markHinted, markSkipped };
+  return { stats, setStats, markSolved, markHinted, markSkipped };
 }

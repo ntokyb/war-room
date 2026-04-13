@@ -1,0 +1,46 @@
+# War Room — Cursor context
+
+## Production Environment
+- Live at: https://warroom.codist.co.za
+- Server: Hetzner VPS 65.109.7.45
+- App dir: /opt/warroom (user: warroom)
+- Containers: warroom-server (port 5050), warroom-client (port 3080)
+- Network: warroom-network (isolated from Billable)
+- Database: SQLite via better-sqlite3 (WAL mode), volume: warroom_sqlite-data
+- CI/CD: push to main → GitHub Actions → auto deploy
+- Workflow: .github/workflows/deploy.yml
+- Nginx: warroom.codist.co.za → 127.0.0.1:3080
+- SSL: Let's Encrypt (auto-renews)
+- Shared VPS with Billable (app.mybillable.co.za) — fully isolated
+
+## Deploy process
+docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+
+## Never touch
+- /etc/nginx/sites-available/warroom (nginx config)
+- Billable containers or network
+- warroom_sqlite-data volume directly
+
+## Roadmap
+
+| Phase | Status |
+|-------|--------|
+| 0 — Fix foundation, split components | ✅ Done |
+| 1 — MongoDB caching | ⏭ Skipped — SQLite is enough |
+| 2 — Session history + dashboard | 🔲 Next |
+| 3 — Favourites + notes | 🔲 After that |
+| 4 — Docker | ✅ Done |
+| 5 — Hetzner deploy + CI/CD | ✅ Done |
+
+Phase 2 is the next real unlock.
+
+Right now stats reset every refresh. Session history means:
+- Every problem attempt saved — platform, category, difficulty, time taken, solved/skipped
+- A dashboard for weak spots — where you skip most, which platforms you’re slow on
+- Visibility into improvement night over night
+
+That turns War Room from a practice tool into a coaching tool — drill next from your own data.
+
+## Coding expectations
+- Match existing stack: React (Vite) client, Express server, SQLite (better-sqlite3).
+- Do not suggest editing production nginx, Billable, or the SQLite volume by hand unless the user explicitly asks for runbook-only instructions.

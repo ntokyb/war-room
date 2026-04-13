@@ -1,12 +1,8 @@
 const Problem = require("../models/Problem");
-const { getPlatformGuide } = require("../constants/platformGuides");
+const { getPlatformGuideEntry } = require("../constants/platformGuides");
 const { parseClaudeJson } = require("../utils/parseClaudeJson");
 
-const SYSTEM_PROMPT = `You are a senior engineer and technical interview coach. You generate authentic coding practice problems that precisely mirror real assessments on specific platforms.
-
-CRITICAL: Each platform has a DISTINCT format, tone, naming convention, and problem structure. You MUST match the platform's actual style — not generic LeetCode-style for everything. A Codility problem looks nothing like a Codewars kata. A HackerRank challenge has different sections than a TestDome assessment. Study the platform guide provided and REPLICATE that exact feel.
-
-You MUST respond with ONLY a valid JSON object — no markdown, no backticks, no text outside JSON.
+const JSON_SCHEMA_BLOCK = `You MUST respond with ONLY a valid JSON object — no markdown, no backticks, no text outside JSON.
 
 JSON structure:
 {
@@ -31,21 +27,45 @@ JSON structure:
   "hints": ["Vague nudge", "More specific", "Almost gives it away"]
 }`;
 
+function buildSystemPrompt(guide) {
+  const base = `You are a senior engineer and technical interview coach generating authentic platform-specific coding problems.
+
+CRITICAL: Each platform has a DISTINCT format, tone, naming convention, and problem structure. You MUST match the platform's actual style — not generic LeetCode-style for everything.
+
+${guide.scoringNotes ? `Platform scoring context:\n${guide.scoringNotes}\n\n` : ""}${JSON_SCHEMA_BLOCK}`;
+  return base;
+}
+
 function buildUserPrompt(
-  platform,
+  platformName,
   platformFocus,
   language,
   category,
   difficulty,
+  guide,
 ) {
-  const guide = getPlatformGuide(platform);
-  return `Platform: ${platform}
-Language: ${language}
-Category: ${category}
-Difficulty: ${difficulty}
-Platform context: ${platformFocus}
-
-${guide ? `${guide}\n\n` : ""}Generate a ${difficulty} ${category} problem in ${language} that authentically mirrors what appears on ${platform}. Follow the format rules above EXACTLY. A candidate who uses ${platform} daily should feel like this came from the real platform. Return ONLY the JSON.`;
+  const lines = [
+    `Platform: ${platformName}`,
+    `Language: ${language}`,
+    `Category: ${category}`,
+    `Difficulty: ${difficulty}`,
+    `Platform context: ${platformFocus || ""}`,
+  ];
+  if (guide.promptInjection) {
+    lines.push("", "Platform requirements:", guide.promptInjection);
+  }
+  if (guide.timeFormat) {
+    lines.push("", `Code format: ${guide.timeFormat}`);
+  }
+  if (guide.exampleStructure) {
+    lines.push("", "Expected code structure:", guide.exampleStructure);
+  }
+  lines.push(
+    "",
+    `Generate a ${difficulty} ${category} problem in ${language} that authentically mirrors what appears on ${platformName}. Follow the platform requirements and JSON schema exactly. A candidate who uses ${platformName} daily should feel like this came from the real platform.`,
+    "Return ONLY JSON.",
+  );
+  return lines.join("\n");
 }
 
 async function generate(req, res, next) {
@@ -99,6 +119,8 @@ async function generate(req, res, next) {
       throw err;
     }
 
+    const guide = getPlatformGuideEntry(platform);
+
     const claudeRes = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
       headers: {
@@ -109,7 +131,7 @@ async function generate(req, res, next) {
       body: JSON.stringify({
         model: "claude-sonnet-4-20250514",
         max_tokens: 4000,
-        system: SYSTEM_PROMPT,
+        system: buildSystemPrompt(guide),
         messages: [
           {
             role: "user",
@@ -119,6 +141,7 @@ async function generate(req, res, next) {
               language,
               category,
               difficulty,
+              guide,
             ),
           },
         ],

@@ -5,6 +5,7 @@ const cors = require("cors");
 const { initDb } = require("./config/db");
 const problemRoutes = require("./routes/problemRoutes");
 const screeningRoutes = require("./routes/screeningRoutes");
+const sessionRoutes = require("./routes/sessions.routes");
 const errorHandler = require("./middleware/errorHandler");
 
 const app = express();
@@ -38,6 +39,7 @@ app.get("/api/health", (_req, res) => {
 
 app.use("/api", problemRoutes);
 app.use("/api", screeningRoutes);
+app.use("/api/sessions", sessionRoutes);
 
 // Error handler (must be last)
 app.use(errorHandler);
