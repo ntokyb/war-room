@@ -6,14 +6,15 @@ export default function Header({
   onHistory,
   onHome,
   onPrepGuide,
+  onCertifications,
   onScreening,
   onMock,
   screen,
 }) {
-  const navBtnStyle = (active) => ({
+  const navBtnStyle = (active, accent = "#00ff88") => ({
     background: "transparent",
     border: "none",
-    color: active ? "#00ff88" : "#444",
+    color: active ? accent : "#444",
     fontSize: "10px",
     letterSpacing: "2px",
     cursor: "pointer",
@@ -33,7 +34,15 @@ export default function Header({
         background: "#0d0d16",
       }}
     >
-      <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "14px",
+          flexWrap: "wrap",
+          rowGap: "8px",
+        }}
+      >
         <button
           type="button"
           onClick={onHome}
@@ -87,6 +96,13 @@ export default function Header({
           style={navBtnStyle(screen === "prep")}
         >
           PREP GUIDE
+        </button>
+        <button
+          type="button"
+          onClick={onCertifications}
+          style={navBtnStyle(screen === "certs", "#0078d4")}
+        >
+          CERTS
         </button>
         <button
           type="button"

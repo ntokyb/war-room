@@ -25,3 +25,13 @@ button {
 a {
   color: inherit;
 }
+
+@keyframes certPulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 1px #0078d4, 0 0 18px #0078d422;
+  }
+  50% {
+    box-shadow: 0 0 0 1px #0078d4, 0 0 28px #0078d455;
+  }
+}

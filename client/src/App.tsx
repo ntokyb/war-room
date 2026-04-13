@@ -10,6 +10,7 @@ import ScreeningConfig from "./components/ScreeningConfig";
 import ScreeningView from "./components/ScreeningView";
 import PrepGuide from "./pages/PrepGuide";
 import Dashboard from "./pages/Dashboard";
+import Certifications from "./pages/Certifications";
 import { PLATFORMS } from "./constants/platforms";
 import { useStats } from "./hooks/useStats";
 import { useTimer } from "./hooks/useTimer";
@@ -136,6 +137,11 @@ export default function App() {
     setScreen("prep");
   };
 
+  const handleCertifications = () => {
+    timer.stop();
+    setScreen("certs");
+  };
+
   const handleViewSavedProblem = ({
     problem: savedProblem,
     platform: savedPlatform,
@@ -217,10 +223,12 @@ export default function App() {
         onHistory={handleViewHistory}
         onHome={handleBackToPlatforms}
         onPrepGuide={handlePrepGuide}
+        onCertifications={handleCertifications}
         onScreening={handleScreening}
         onMock={handleMock}
         screen={screen}
       />
+      {screen === "certs" && <Certifications onBack={handleBackToPlatforms} />}
       {screen === "prep" && <PrepGuide onNavigate={setScreen} />}
       {screen === "dashboard" && <Dashboard onNavigate={handleNavigate} />}
       {screen === "platform" && (
