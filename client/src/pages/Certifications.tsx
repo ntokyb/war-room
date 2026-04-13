@@ -37,8 +37,11 @@ export default function Certifications({
   const [mastery, setMastery] = useState(loadMastery);
   const [examDates, setExamDates] = useState(loadExamDates);
   const [studyCertId, setStudyCertId] = useState("az900");
-  const [sessionTick, setSessionTick] = useState(0);
+  /** Bumped from event handlers so Progress can re-read localStorage session counts without effects. */
+  const [sessionLogVersion, setSessionLogVersion] = useState(0);
   const [examEditCertId, setExamEditCertId] = useState("az900");
+  /** Wall-clock anchor for exam countdown; updated from timers (not Date.now() during render). */
+  const [countdownNowMs, setCountdownNowMs] = useState<number | null>(null);
 
   useEffect(() => {
     saveCertProgress(progress);
@@ -54,18 +57,35 @@ export default function Certifications({
 
   useEffect(() => {
     if (!initialStudyCertId) return;
-    setStudyCertId(initialStudyCertId);
-    setMainTab("study");
-    logStudySession(initialStudyCertId);
-    setSessionTick((t) => t + 1);
-    onConsumeStudyCert?.();
+    const t = window.setTimeout(() => {
+      setStudyCertId(initialStudyCertId);
+      setMainTab("study");
+      logStudySession(initialStudyCertId);
+      setSessionLogVersion((v) => v + 1);
+      onConsumeStudyCert?.();
+    }, 0);
+    return () => window.clearTimeout(t);
   }, [initialStudyCertId, onConsumeStudyCert]);
 
+  const targetDateStr = examDates[examEditCertId] ?? "";
+
   useEffect(() => {
-    if (mainTab !== "study") return;
-    logStudySession(studyCertId);
-    setSessionTick((t) => t + 1);
-  }, [mainTab, studyCertId]);
+    if (mainTab !== "progress") {
+      const clearT = window.setTimeout(() => setCountdownNowMs(null), 0);
+      return () => window.clearTimeout(clearT);
+    }
+    let cancelled = false;
+    const bump = () => {
+      if (!cancelled) setCountdownNowMs(Date.now());
+    };
+    const t0 = window.setTimeout(bump, 0);
+    const id = window.setInterval(bump, 60_000);
+    return () => {
+      cancelled = true;
+      window.clearTimeout(t0);
+      window.clearInterval(id);
+    };
+  }, [mainTab, examEditCertId, targetDateStr]);
 
   const handleMarkDone = (id: string) => {
     setProgress((p) => markCertDone(p, id));
@@ -75,8 +95,22 @@ export default function Certifications({
     setStudyCertId(id);
     setMainTab("study");
     logStudySession(id);
-    setSessionTick((t) => t + 1);
+    setSessionLogVersion((v) => v + 1);
     setProgress((p) => (p[id] === "next" ? markCertStudying(p, id) : p));
+  };
+
+  const handleSelectMainTab = (id: MainTab) => {
+    setMainTab(id);
+    if (id === "study") {
+      logStudySession(studyCertId);
+      setSessionLogVersion((v) => v + 1);
+    }
+  };
+
+  const handleStudyCertChange = (id: string) => {
+    setStudyCertId(id);
+    logStudySession(id);
+    setSessionLogVersion((v) => v + 1);
   };
 
   const doneCount = CERT_ORDER.filter((id) => progress[id] === "done").length;
@@ -85,9 +119,9 @@ export default function Certifications({
   }, [progress]);
 
   const weekSessions = useMemo(() => {
-    void sessionTick;
+    void sessionLogVersion;
     return sessionsInLastDays(7);
-  }, [sessionTick]);
+  }, [sessionLogVersion]);
 
   const readinessAz900 = useMemo(() => {
     const m = new Set(mastery.az900 ?? []);
@@ -95,16 +129,18 @@ export default function Certifications({
     return Number.isFinite(pct) ? pct : 0;
   }, [mastery]);
 
-  const targetDateStr = examDates[examEditCertId] ?? "";
   const daysUntil =
-    targetDateStr && !Number.isNaN(Date.parse(targetDateStr))
-      ? Math.ceil((Date.parse(targetDateStr) - Date.now()) / 86400000)
+    mainTab === "progress" &&
+    countdownNowMs !== null &&
+    targetDateStr &&
+    !Number.isNaN(Date.parse(targetDateStr))
+      ? Math.ceil((Date.parse(targetDateStr) - countdownNowMs) / 86400000)
       : null;
 
   const tabBtn = (id: MainTab, label: string) => (
     <button
       type="button"
-      onClick={() => setMainTab(id)}
+      onClick={() => handleSelectMainTab(id)}
       style={{
         background: mainTab === id ? `${AZURE}22` : "transparent",
         border: `1px solid ${mainTab === id ? AZURE : "#2a2a3e"}`,
@@ -172,7 +208,7 @@ export default function Certifications({
         {mainTab === "study" && (
           <StudyMode
             certId={studyCertId}
-            onCertIdChange={setStudyCertId}
+            onCertIdChange={handleStudyCertChange}
             mastery={mastery}
             onMasteryChange={setMastery}
           />

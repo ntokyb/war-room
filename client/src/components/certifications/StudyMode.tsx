@@ -29,7 +29,7 @@ export default function StudyMode({
   const [index, setIndex] = useState(0);
   const [flipped, setFlipped] = useState(false);
 
-  const bank = FLASHCARDS_BY_CERT[certId] ?? [];
+  const bank = useMemo(() => FLASHCARDS_BY_CERT[certId] ?? [], [certId]);
 
   const topics = useMemo(() => {
     const s = new Set<string>();
