@@ -10,8 +10,22 @@ const errorHandler = require("./middleware/errorHandler");
 const app = express();
 const PORT = process.env.PORT || 5050;
 
+const trustProxy = process.env.TRUST_PROXY;
+if (trustProxy === "1" || trustProxy === "true") {
+  app.set("trust proxy", 1);
+} else if (trustProxy && /^\d+$/.test(trustProxy)) {
+  app.set("trust proxy", parseInt(trustProxy, 10));
+}
+
+const corsOrigins = process.env.CORS_ORIGIN;
+const corsOptions = corsOrigins
+  ? {
+      origin: corsOrigins.split(",").map((s) => s.trim()).filter(Boolean),
+    }
+  : undefined;
+
 // Middleware
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // Initialize database

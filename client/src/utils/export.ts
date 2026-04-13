@@ -1,0 +1,240 @@
+// Export problems and screening questions as Markdown files
+
+import type {
+  Language,
+  Platform,
+  Problem,
+  ScreeningCategory,
+  ScreeningQuestion,
+  ScreeningTypeOption,
+  SolutionStep,
+} from "../types/domain";
+
+function downloadFile(filename: string, content: string) {
+  const blob = new Blob([content], { type: "text/markdown;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function toSlug(title: string | undefined, fallback = "export") {
+  return (title || fallback)
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+}
+
+function pushCodeBlock(lines: string[], code: string) {
+  lines.push("```");
+  lines.push(code);
+  lines.push("```");
+  lines.push("");
+}
+
+function pushHints(lines: string[], hints: string[] | undefined) {
+  if (!hints?.length) return;
+  lines.push("## Hints");
+  lines.push("");
+  hints.forEach((h, i) =>
+    lines.push(
+      `<details><summary>Hint ${i + 1}</summary>\n\n${h}\n\n</details>`,
+    ),
+  );
+  lines.push("");
+}
+
+function pushSeniorTip(lines: string[], tip: string | undefined) {
+  if (!tip) return;
+  lines.push("## Senior Tip");
+  lines.push("");
+  lines.push(`> "${tip}"`);
+  lines.push("");
+}
+
+export function exportProblemMarkdown(
+  problem: Problem,
+  platform: Platform,
+  language: Language,
+) {
+  const lines: string[] = [];
+  const slug = toSlug(problem.title, "problem");
+
+  lines.push(`# ${problem.title}`);
+  lines.push("");
+  lines.push(
+    `**Platform:** ${platform.name} · **Language:** ${language.name} · **Difficulty:** ${problem.difficulty}`,
+  );
+  lines.push("");
+
+  if (problem.platformNotes) {
+    lines.push(`> ${problem.platformNotes}`);
+    lines.push("");
+  }
+
+  lines.push("## Problem");
+  lines.push("");
+  lines.push(problem.description);
+  lines.push("");
+
+  if (problem.constraints?.length) {
+    lines.push("### Constraints");
+    lines.push("");
+    problem.constraints.forEach((c) => lines.push(`- ${c}`));
+    lines.push("");
+  }
+
+  if (problem.realWorldContext) {
+    lines.push(`**Real-world context:** ${problem.realWorldContext}`);
+    lines.push("");
+  }
+
+  lines.push("---");
+  lines.push("");
+
+  if (problem.ideSetup?.length) {
+    lines.push("## IDE Setup");
+    lines.push("");
+    problem.ideSetup.forEach((s, i) => lines.push(`${i + 1}. ${s}`));
+    lines.push("");
+  }
+
+  if (problem.thinkingProcess?.length) {
+    lines.push("## Think Before You Type");
+    lines.push("");
+    problem.thinkingProcess.forEach((t) => lines.push(`- ${t}`));
+    lines.push("");
+  }
+
+  pushHints(lines, problem.hints);
+
+  if (problem.steps?.length) {
+    lines.push("## Step-by-Step Solution");
+    lines.push("");
+    problem.steps.forEach((s: SolutionStep) => {
+      lines.push(`### Step ${s.step}: ${s.title}`);
+      lines.push("");
+      lines.push(s.explanation);
+      lines.push("");
+      if (s.code) pushCodeBlock(lines, s.code);
+    });
+  }
+
+  if (problem.fullSolution) {
+    lines.push("## Full Solution");
+    lines.push("");
+    pushCodeBlock(lines, problem.fullSolution);
+  }
+
+  if (problem.complexity) {
+    lines.push("## Complexity");
+    lines.push("");
+    lines.push(`- **Time:** ${problem.complexity.time}`);
+    lines.push(`- **Space:** ${problem.complexity.space}`);
+    lines.push("");
+  }
+
+  if (problem.commonMistakes?.length) {
+    lines.push("## Common Mistakes");
+    lines.push("");
+    problem.commonMistakes.forEach((m) => lines.push(`- ✕ ${m}`));
+    lines.push("");
+  }
+
+  pushSeniorTip(lines, problem.seniorTip);
+
+  downloadFile(`${slug}.md`, lines.join("\n"));
+}
+
+export function exportScreeningMarkdown(
+  question: ScreeningQuestion,
+  category: ScreeningCategory,
+  type: ScreeningTypeOption,
+) {
+  const lines: string[] = [];
+  const slug = toSlug(question.title, "screening");
+
+  lines.push(`# ${question.title}`);
+  lines.push("");
+  lines.push(
+    `**Category:** ${category.name} · **Type:** ${type.name} · **Difficulty:** ${question.difficulty}`,
+  );
+  lines.push("");
+
+  if (question.context) {
+    lines.push(`> ${question.context}`);
+    lines.push("");
+  }
+
+  lines.push("## Question");
+  lines.push("");
+  lines.push(question.question);
+  lines.push("");
+
+  if (question.codeSnippet) {
+    lines.push("### Code to Review");
+    lines.push("");
+    pushCodeBlock(lines, question.codeSnippet);
+  }
+
+  pushHints(lines, question.hints);
+
+  lines.push("---");
+  lines.push("");
+
+  if (question.answer) {
+    lines.push("## Quick Answer");
+    lines.push("");
+    lines.push(question.answer.summary);
+    lines.push("");
+
+    lines.push("## Full Explanation");
+    lines.push("");
+    lines.push(question.answer.detailed);
+    lines.push("");
+
+    if (question.answer.codeExample) {
+      lines.push("## Code Example");
+      lines.push("");
+      pushCodeBlock(lines, question.answer.codeExample);
+    }
+
+    if (question.answer.realWorldScenario) {
+      lines.push("## Real-World Scenario");
+      lines.push("");
+      lines.push(question.answer.realWorldScenario);
+      lines.push("");
+    }
+  }
+
+  if (question.whatInterviewersWant) {
+    lines.push("## What Interviewers Want");
+    lines.push("");
+    lines.push(question.whatInterviewersWant);
+    lines.push("");
+  }
+
+  if (question.commonWrongAnswers?.length) {
+    lines.push("## Common Wrong Answers");
+    lines.push("");
+    question.commonWrongAnswers.forEach((wa) => lines.push(`- ⚠ ${wa}`));
+    lines.push("");
+  }
+
+  if (question.followUpQuestions?.length) {
+    lines.push("## Follow-Up Questions");
+    lines.push("");
+    question.followUpQuestions.forEach((fq, i) =>
+      lines.push(`${i + 1}. ${fq}`),
+    );
+    lines.push("");
+  }
+
+  pushSeniorTip(lines, question.seniorTip);
+
+  downloadFile(`${slug}.md`, lines.join("\n"));
+}

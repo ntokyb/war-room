@@ -1,5 +1,6 @@
 const Problem = require("../models/Problem");
 const { getPlatformGuide } = require("../constants/platformGuides");
+const { parseClaudeJson } = require("../utils/parseClaudeJson");
 
 const SYSTEM_PROMPT = `You are a senior engineer and technical interview coach. You generate authentic coding practice problems that precisely mirror real assessments on specific platforms.
 
@@ -98,7 +99,6 @@ async function generate(req, res, next) {
       throw err;
     }
 
-    const fetch = (await import("node-fetch")).default;
     const claudeRes = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
       headers: {
@@ -139,8 +139,7 @@ async function generate(req, res, next) {
       claudeData.content?.[0]?.text ??
       "";
 
-    const cleaned = text.replace(/```json|```/g, "").trim();
-    const problem = JSON.parse(cleaned);
+    const problem = parseClaudeJson(text, "problem");
 
     // Save to cache
     const id = Problem.save(

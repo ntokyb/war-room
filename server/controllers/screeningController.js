@@ -1,4 +1,5 @@
 const Screening = require("../models/Screening");
+const { parseClaudeJson } = require("../utils/parseClaudeJson");
 
 const SCREENING_SYSTEM_PROMPT = `You are a senior technical interviewer conducting a screening round for a developer with 10+ years of C#/.NET/Angular/SQL experience applying for senior/lead positions at banks (ABSA, Investec), automotive (Toyota), government, and enterprise companies.
 
@@ -91,7 +92,6 @@ async function generate(req, res, next) {
       throw err;
     }
 
-    const fetch = (await import("node-fetch")).default;
     const claudeRes = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
       headers: {
@@ -126,8 +126,7 @@ async function generate(req, res, next) {
       claudeData.content?.[0]?.text ??
       "";
 
-    const cleaned = text.replace(/```json|```/g, "").trim();
-    const question = JSON.parse(cleaned);
+    const question = parseClaudeJson(text, "screening");
 
     const id = Screening.save(
       category,

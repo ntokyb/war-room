@@ -1,0 +1,178 @@
+import type { Language, Platform } from "../types/domain";
+
+export const PLATFORMS: Platform[] = [
+  {
+    id: "codility",
+    name: "Codility",
+    color: "#00c2ff",
+    icon: "⚙",
+    tagline: "Performance-scored. Every ms counts.",
+    timeLimit: 30,
+    focus:
+      "PascalCase function names. Scored on correctness (0-100%) + performance (0-100%) separately. Edge cases: empty arrays, single element, N up to 1,000,000.",
+    categories: [
+      "Arrays",
+      "Sorting",
+      "Prefix Sums",
+      "Stacks & Queues",
+      "Binary Search",
+      "Dynamic Programming",
+      "Greedy",
+      "Graphs",
+    ],
+  },
+  {
+    id: "hackerrank",
+    name: "HackerRank",
+    color: "#00ea64",
+    icon: "◆",
+    tagline: "Domain-wide. Warm up then go deep.",
+    timeLimit: 45,
+    focus:
+      "Stdin/stdout format. Sections: Input Format, Constraints, Output Format, Sample I/O, Explanation. Constraints use ≤ notation. Multiple test cases.",
+    categories: [
+      "Warm-up",
+      "Implementation",
+      "Strings",
+      "Sorting",
+      "Search",
+      "Graph Theory",
+      "Recursion",
+      "SQL",
+    ],
+  },
+  {
+    id: "testdome",
+    name: "TestDome",
+    color: "#ff6b35",
+    icon: "◉",
+    tagline: "Real-world C# scenarios.",
+    timeLimit: 35,
+    focus:
+      "Practical code with starter code to fix/complete. Tests LINQ, async, OOP, EF Core patterns. Partial credit scoring. Unit test expectations.",
+    categories: [
+      "LINQ",
+      "Async/Await",
+      "OOP & Interfaces",
+      "Collections",
+      "Error Handling",
+      "EF Core",
+      "Design Patterns",
+      "Unit Testing",
+    ],
+  },
+  {
+    id: "leetcode",
+    name: "LeetCode",
+    color: "#ffa116",
+    icon: "◈",
+    tagline: "FAANG gold standard.",
+    timeLimit: 40,
+    focus:
+      "Class Solution with method. Examples numbered: Example 1/2/3. Constraints as bullets. Follow-up for optimization. Related Topics tags.",
+    categories: [
+      "Two Pointers",
+      "Sliding Window",
+      "Hash Maps",
+      "Binary Search",
+      "Trees",
+      "Dynamic Programming",
+      "Backtracking",
+      "Graphs",
+    ],
+  },
+  {
+    id: "codesignal",
+    name: "CodeSignal",
+    color: "#bf7fff",
+    icon: "⟡",
+    tagline: "Arcade-style. Speed matters.",
+    timeLimit: 20,
+    focus:
+      "Short clean tasks. camelCase names. [input]/[output] parameter blocks. Guaranteed constraints. Speed-scored. Standalone functions.",
+    categories: [
+      "Arcade",
+      "Arrays",
+      "Strings",
+      "Matrix",
+      "Sorting",
+      "Bit Manipulation",
+      "Math",
+      "Linked Lists",
+    ],
+  },
+  {
+    id: "hackerearth",
+    name: "HackerEarth",
+    color: "#2196f3",
+    icon: "◭",
+    tagline: "Competitive-style problems.",
+    timeLimit: 45,
+    focus:
+      "Competitive programming. Multiple test cases (T). Stdin/stdout. Time Limit: 2s, Memory: 256MB. Fast I/O required for large N.",
+    categories: [
+      "Basic Programming",
+      "Arrays",
+      "Strings",
+      "Sorting",
+      "Searching",
+      "Trees",
+      "Graphs",
+      "Dynamic Programming",
+    ],
+  },
+  {
+    id: "coderbyte",
+    name: "Coderbyte",
+    color: "#ff4081",
+    icon: "◫",
+    tagline: "Company screening. Practical problems.",
+    timeLimit: 30,
+    focus:
+      "Company screening assessments. 'Have the function X(str) take the str parameter...' style. Mix of algorithms and practical parsing. Returns result, never prints.",
+    categories: [
+      "Arrays",
+      "Strings",
+      "Objects",
+      "File Parsing",
+      "SQL Queries",
+      "Regex",
+      "OOP",
+      "Recursion",
+    ],
+  },
+  {
+    id: "codewars",
+    name: "Codewars",
+    color: "#b22335",
+    icon: "⛩",
+    tagline: "Kata mastery. Community-driven.",
+    timeLimit: 25,
+    focus:
+      "Kata format. Kyu-ranked (8=easy, 1=hard). Creative descriptions. Values elegance and functional style. Test.assertEquals assertions.",
+    categories: [
+      "Fundamentals",
+      "Arrays",
+      "Strings",
+      "OOP",
+      "Functional",
+      "Algorithms",
+      "Math",
+      "Puzzles",
+    ],
+  },
+];
+
+export const LANGUAGES: Language[] = [
+  { id: "csharp", name: "C#", icon: "⬡", color: "#00ff88" },
+  { id: "javascript", name: "JavaScript", icon: "JS", color: "#ffe066" },
+  { id: "typescript", name: "TypeScript", icon: "TS", color: "#3178c6" },
+  { id: "angular", name: "Angular", icon: "▲", color: "#dd0031" },
+  { id: "sql", name: "SQL", icon: "⊞", color: "#ff9f00" },
+];
+
+export const DIFFICULTIES: { id: string; color: string }[] = [
+  { id: "Easy", color: "#00ff88" },
+  { id: "Medium", color: "#ff9f00" },
+  { id: "Hard", color: "#ff5e7a" },
+];
