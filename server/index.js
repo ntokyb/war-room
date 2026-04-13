@@ -3,10 +3,18 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const { initDb } = require("./config/db");
+const { assertSecretIfAuthEnabled } = require("./utils/appSession");
+const authRoutes = require("./routes/authRoutes");
+const requireAppSession = require("./middleware/requireAppSession");
 const problemRoutes = require("./routes/problemRoutes");
 const screeningRoutes = require("./routes/screeningRoutes");
 const sessionRoutes = require("./routes/sessions.routes");
+const guestUsersRoutes = require("./routes/guestUsersRoutes");
+const requireSuperUser = require("./middleware/requireSuperUser");
+const { isAppAuthEnabled } = require("./utils/appSession");
 const errorHandler = require("./middleware/errorHandler");
+
+assertSecretIfAuthEnabled();
 
 const app = express();
 const PORT = process.env.PORT || 5050;
@@ -22,8 +30,9 @@ const corsOrigins = process.env.CORS_ORIGIN;
 const corsOptions = corsOrigins
   ? {
       origin: corsOrigins.split(",").map((s) => s.trim()).filter(Boolean),
+      credentials: true,
     }
-  : undefined;
+  : { origin: true, credentials: true };
 
 // Middleware
 app.use(cors(corsOptions));
@@ -36,6 +45,31 @@ initDb();
 app.get("/api/health", (_req, res) => {
   res.json({ status: "ok", timestamp: new Date().toISOString() });
 });
+
+app.use("/api", authRoutes);
+
+const APP_AUTH_PUBLIC = new Set([
+  "/api/health",
+  "/api/auth/status",
+  "/api/auth/login",
+  "/api/auth/logout",
+]);
+
+app.use((req, res, next) => {
+  if (!req.path.startsWith("/api")) {
+    next();
+    return;
+  }
+  if (APP_AUTH_PUBLIC.has(req.path)) {
+    next();
+    return;
+  }
+  requireAppSession(req, res, next);
+});
+
+if (isAppAuthEnabled()) {
+  app.use("/api/auth/guests", requireSuperUser, guestUsersRoutes);
+}
 
 app.use("/api", problemRoutes);
 app.use("/api", screeningRoutes);

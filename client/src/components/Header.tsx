@@ -1,3 +1,7 @@
+import { Fragment, useContext, useState } from "react";
+import { AuthSurfaceContext } from "../context/AuthSurfaceContext";
+import GuestPassesModal from "./GuestPassesModal";
+
 export default function Header({
   stats,
   timer,
@@ -11,6 +15,9 @@ export default function Header({
   onMock,
   screen,
 }) {
+  const authSurface = useContext(AuthSurfaceContext);
+  const [guestPassesOpen, setGuestPassesOpen] = useState(false);
+
   const navBtnStyle = (active, accent = "#00ff88") => ({
     background: "transparent",
     border: "none",
@@ -24,6 +31,7 @@ export default function Header({
   });
 
   return (
+    <Fragment>
     <header
       style={{
         borderBottom: "1px solid #1e1e2e",
@@ -122,6 +130,24 @@ export default function Header({
         >
           MOCK
         </button>
+        {authSurface?.role === "super" ? (
+          <button
+            type="button"
+            onClick={() => setGuestPassesOpen(true)}
+            style={navBtnStyle(false, "#0078d4")}
+          >
+            GUEST PASSES
+          </button>
+        ) : null}
+        {authSurface?.authRequired ? (
+          <button
+            type="button"
+            onClick={() => void authSurface.signOut()}
+            style={navBtnStyle(false, "#ff5e7a")}
+          >
+            SIGN OUT
+          </button>
+        ) : null}
       </div>
       <div
         style={{
@@ -146,5 +172,7 @@ export default function Header({
         )}
       </div>
     </header>
+    {guestPassesOpen ? <GuestPassesModal onClose={() => setGuestPassesOpen(false)} /> : null}
+    </Fragment>
   );
 }

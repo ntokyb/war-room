@@ -70,7 +70,22 @@ function initDb() {
     CREATE INDEX IF NOT EXISTS idx_sessions_difficulty   ON sessions(difficulty);
     CREATE INDEX IF NOT EXISTS idx_sessions_created_at  ON sessions(created_at);
     CREATE INDEX IF NOT EXISTS idx_sessions_outcome     ON sessions(outcome);
+
+    CREATE TABLE IF NOT EXISTS app_guest_users (
+      username      TEXT PRIMARY KEY,
+      password_hash TEXT NOT NULL,
+      expires_at    TEXT NOT NULL,
+      created_at    TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_app_guest_users_expires ON app_guest_users(expires_at);
   `);
+
+  try {
+    db.prepare(`DELETE FROM app_guest_users WHERE datetime(expires_at) <= datetime('now')`).run();
+  } catch {
+    /* non-fatal */
+  }
 
   console.log("Database initialized at", DB_PATH);
 }

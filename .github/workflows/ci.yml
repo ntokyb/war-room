@@ -71,6 +71,10 @@ jobs:
         working-directory: server
         run: npm ci
 
+      - name: Test
+        working-directory: server
+        run: npm test
+
   docker-build:
     name: Docker Build Test
     runs-on: ubuntu-latest

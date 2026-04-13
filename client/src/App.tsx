@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import AppAuthGate from "./components/AppAuthGate";
 import Header from "./components/Header";
 import MockConfig from "./components/MockConfig";
 import MockSession from "./components/MockSession";
@@ -17,7 +18,7 @@ import { useTimer } from "./hooks/useTimer";
 import { fetchSummary } from "./services/api";
 import type { Language, Platform, Problem } from "./types/domain";
 
-export default function App() {
+function WarRoomApp() {
   const [screen, setScreen] = useState("platform");
   const [platform, setPlatform] = useState<Platform | null>(null);
   const [language, setLanguage] = useState<Language | null>(null);
@@ -286,5 +287,13 @@ export default function App() {
         <MockSession config={mockConfig} onFinish={handleMockFinish} />
       )}
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <AppAuthGate>
+      <WarRoomApp />
+    </AppAuthGate>
   );
 }
