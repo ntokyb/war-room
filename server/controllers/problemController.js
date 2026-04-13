@@ -1,5 +1,6 @@
 const Problem = require("../models/Problem");
 const { getPlatformGuideEntry } = require("../constants/platformGuides");
+const { getCategoryGuideAddition } = require("../constants/categoryGuides");
 const { parseClaudeJson } = require("../utils/parseClaudeJson");
 
 const JSON_SCHEMA_BLOCK = `You MUST respond with ONLY a valid JSON object — no markdown, no backticks, no text outside JSON.
@@ -44,6 +45,7 @@ function buildUserPrompt(
   difficulty,
   guide,
 ) {
+  const categoryExtra = getCategoryGuideAddition(platformName, category);
   const lines = [
     `Platform: ${platformName}`,
     `Language: ${language}`,
@@ -53,6 +55,9 @@ function buildUserPrompt(
   ];
   if (guide.promptInjection) {
     lines.push("", "Platform requirements:", guide.promptInjection);
+  }
+  if (categoryExtra) {
+    lines.push("", "Category-specific requirements:", categoryExtra);
   }
   if (guide.timeFormat) {
     lines.push("", `Code format: ${guide.timeFormat}`);

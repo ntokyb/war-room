@@ -35,12 +35,13 @@ const PLATFORM_GUIDES = {
   },
 
   testdome: {
-    scoringNotes: `TestDome tests practical .NET knowledge, not just algorithms. Questions are a mix of: code completion (fill in a method body), bug fixing (find and fix the error), output prediction (what does this code print), and full implementation. They probe LINQ heavily, async/await correctness, interface vs abstract class distinctions, and EF Core query patterns. Null reference exceptions and off-by-one errors are common traps. Idiomatic C# matters — a working but un-idiomatic solution scores lower than a clean one.`,
+    scoringNotes: `TestDome tests practical .NET knowledge, not just algorithms. Questions are a mix of: code completion (fill in a method body), bug fixing (find and fix the error), output prediction (what does this code print), and full implementation. They probe LINQ heavily, async/await correctness, interface vs abstract class distinctions, EF Core query patterns, and unit testing with real test frameworks. Null reference exceptions and off-by-one errors are common traps. Idiomatic C# matters — a working but un-idiomatic solution scores lower than a clean one.`,
     promptInjection: `This is a TestDome-style problem targeting senior .NET/C# developers. The solution MUST:
 - Use idiomatic, modern C# (.NET 8 features where appropriate)
 - For LINQ questions: use method syntax (not query syntax), chain operations cleanly
 - For async questions: always await properly, never use .Result or .Wait() (deadlock trap), use CancellationToken where appropriate
 - For OOP questions: show understanding of when to use interface vs abstract class, favour composition
+- For Unit Testing categories: include realistic tests using the framework implied by the category name (xUnit, NUnit, MSTest, or TUnit), with Arrange–Act–Assert, clear assertions, and edge cases (null, empty, boundaries)
 - Handle nulls explicitly — use null-conditional operators (?.), null-coalescing (??), and guard clauses
 - Include common traps: IEnumerable deferred execution, IQueryable vs IEnumerable for EF Core, async void dangers
 - The explanation must call out WHY the idiomatic approach matters, not just what it does`,

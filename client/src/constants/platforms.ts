@@ -58,7 +58,10 @@ export const PLATFORMS: Platform[] = [
       "Error Handling",
       "EF Core",
       "Design Patterns",
-      "Unit Testing",
+      "Unit Testing — xUnit",
+      "Unit Testing — NUnit",
+      "Unit Testing — MSTest",
+      "Unit Testing — TUnit",
     ],
   },
   {

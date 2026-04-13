@@ -20,9 +20,9 @@ export const PREP_PLATFORM_INTEL: Record<string, PrepCardIntel> = {
     watchOutFor: `Mis-parsing stdin/stdout format — one wrong split can zero the whole problem.`,
   },
   testdome: {
-    scoringHow: `TestDome tests practical .NET knowledge, not just algorithms. Questions are a mix of: code completion (fill in a method body), bug fixing (find and fix the error), output prediction (what does this code print), and full implementation. They probe LINQ heavily, async/await correctness, interface vs abstract class distinctions, and EF Core query patterns. Null reference exceptions and off-by-one errors are common traps. Idiomatic C# matters — a working but un-idiomatic solution scores lower than a clean one.`,
-    yourTactic: `Read the signature and tests first, then answer with idiomatic C# (LINQ method syntax, proper async, null guards).`,
-    watchOutFor: `Deferred IEnumerable execution and IQueryable vs IEnumerable mistakes in EF-style questions.`,
+    scoringHow: `TestDome tests practical .NET knowledge, not just algorithms. Questions are a mix of: code completion (fill in a method body), bug fixing (find and fix the error), output prediction (what does this code print), and full implementation. They probe LINQ heavily, async/await correctness, interface vs abstract class distinctions, EF Core query patterns, and realistic unit tests (xUnit, NUnit, MSTest, or TUnit). Null reference exceptions and off-by-one errors are common traps. Idiomatic C# matters — a working but un-idiomatic solution scores lower than a clean one.`,
+    yourTactic: `Read the signature and tests first, then answer with idiomatic C# (LINQ method syntax, proper async, null guards, and framework-correct test code when the item is testing-focused).`,
+    watchOutFor: `Deferred IEnumerable execution, IQueryable vs IEnumerable mistakes in EF-style questions, and mixing assertion APIs across frameworks.`,
   },
   leetcode: {
     scoringHow: `LeetCode problems are used in FAANG-style live interviews and take-homes. In live interviews, your thinking process matters as much as the solution — interviewers want to hear you reason through the problem. State brute force first, then optimise. In take-homes, correctness and optimal complexity are expected. Always know your data structures cold: when to use HashMap vs TreeMap, Stack vs Queue, when a heap is appropriate. The problem constraints (1 <= n <= 10^5) tell you what complexity is acceptable.`,

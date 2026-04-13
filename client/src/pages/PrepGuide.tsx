@@ -95,6 +95,101 @@ Console.Write(sb.ToString());`,
   },
 ];
 
+const TESTING_OVERVIEW = `Top .NET testing frameworks — pick the one the task names: xUnit.net is the most popular modern default (parallel by default, constructor setup). NUnit is mature with excellent parameterized and data-driven support. MSTest is Microsoft’s first-party stack with strong Visual Studio and Azure DevOps integration. TUnit is newer, built on Microsoft.Testing.Platform, aimed at speed, source-generated discovery, and Native AOT.`;
+
+const TESTING_CHEAT_BLOCKS: { title: string; code: string }[] = [
+  {
+    title: "xUnit.net — Fact, Theory, fixture",
+    code: `using Xunit;
+
+public class CalculatorTests
+{
+    [Fact]
+    public void Add_TwoInts_ReturnsSum()
+    {
+        var sut = new Calculator();
+        Assert.Equal(5, sut.Add(2, 3));
+    }
+
+    [Theory]
+    [InlineData(0, 0, 0)]
+    [InlineData(-1, 1, 0)]
+    public void Add_Theory_MatchesExpected(int a, int b, int expected)
+    {
+        Assert.Equal(expected, new Calculator().Add(a, b));
+    }
+}
+
+// Optional: shared context via IClassFixture<T>`,
+  },
+  {
+    title: "NUnit — Test, TestCase, Assert.That",
+    code: `using NUnit.Framework;
+
+[TestFixture]
+public class CalculatorTests
+{
+    [Test]
+    public void Add_TwoInts_ReturnsSum()
+    {
+        Assert.That(new Calculator().Add(2, 3), Is.EqualTo(5));
+    }
+
+    [TestCase(0, 0, 0)]
+    [TestCase(-1, 1, 0)]
+    public void Add_Parameterized(int a, int b, int expected)
+    {
+        Assert.That(new Calculator().Add(a, b), Is.EqualTo(expected));
+    }
+}`,
+  },
+  {
+    title: "MSTest — TestMethod, DataRow",
+    code: `using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+[TestClass]
+public class CalculatorTests
+{
+    [TestMethod]
+    public void Add_TwoInts_ReturnsSum()
+    {
+        Assert.AreEqual(5, new Calculator().Add(2, 3));
+    }
+
+    [DataTestMethod]
+    [DataRow(0, 0, 0)]
+    [DataRow(-1, 1, 0)]
+    public void Add_DataRows(int a, int b, int expected)
+    {
+        Assert.AreEqual(expected, new Calculator().Add(a, b));
+    }
+}`,
+  },
+  {
+    title: "TUnit — MTP, fluent Assert.That (async)",
+    code: `using TUnit.Assertions;
+using TUnit.Core;
+
+public class CalculatorTests
+{
+    [Test]
+    public async Task Add_TwoInts_ReturnsSum()
+    {
+        var result = new Calculator().Add(2, 3);
+        await Assert.That(result).IsEqualTo(5);
+    }
+
+    [Test]
+    [Arguments(0, 0, 0)]
+    [Arguments(-1, 1, 0)]
+    public async Task Add_Arguments(int a, int b, int expected)
+    {
+        await Assert.That(new Calculator().Add(a, b)).IsEqualTo(expected);
+    }
+}`,
+  },
+];
+
 const SENIOR_BEHAVIOURS: { title: string; body: string }[] = [
   {
     title: "Clarify before coding",
@@ -124,7 +219,8 @@ const DRILL_ROWS: { night: string; platform: string; category: string; difficult
   { night: "Wed", platform: "Codility", category: "Arrays", difficulty: "Easy ×2, Med ×2" },
   { night: "Thu", platform: "HackerRank", category: "Strings + Sorting", difficulty: "Mixed" },
   { night: "Fri", platform: "CodeSignal", category: "Arcade", difficulty: "4 problems timed" },
-  { night: "Sat/Sun", platform: "LeetCode", category: "Two Pointers + HashMaps", difficulty: "Med ×3" },
+  { night: "Sat", platform: "LeetCode", category: "Two Pointers + HashMaps", difficulty: "Med ×3" },
+  { night: "Sun", platform: "TestDome", category: "Unit Testing — xUnit / NUnit", difficulty: "Med ×2" },
 ];
 
 type PrepGuideProps = {
@@ -332,6 +428,18 @@ export default function PrepGuide({ onNavigate }: PrepGuideProps) {
         {/* C — C# cheat sheet */}
         <h2 style={sectionTitleStyle}>C# PATTERNS CHEAT SHEET</h2>
         {CHEAT_BLOCKS.map((block) => (
+          <div key={block.title}>
+            <div style={{ fontSize: "11px", color: "#888", marginBottom: "8px" }}>{block.title}</div>
+            <pre style={codeBlockStyle}>{block.code}</pre>
+          </div>
+        ))}
+
+        {/* C2 — .NET unit testing frameworks */}
+        <h2 style={sectionTitleStyle}>.NET UNIT TESTING FRAMEWORKS</h2>
+        <p style={{ margin: "0 0 20px 0", fontSize: "12px", color: "#aaa", lineHeight: 1.85 }}>
+          {TESTING_OVERVIEW}
+        </p>
+        {TESTING_CHEAT_BLOCKS.map((block) => (
           <div key={block.title}>
             <div style={{ fontSize: "11px", color: "#888", marginBottom: "8px" }}>{block.title}</div>
             <pre style={codeBlockStyle}>{block.code}</pre>
