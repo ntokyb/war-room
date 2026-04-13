@@ -35,7 +35,21 @@ export default function ProblemHeader({
             {problem.title}
           </div>
         </div>
-        {timer && <div style={styles.timerDisplay}>{timer.format()}</div>}
+        {timer && (
+          <div style={{ textAlign: "right" }}>
+            <div
+              style={{
+                fontSize: sizes.fontXs,
+                color: colors.textGhost,
+                letterSpacing: "2px",
+                marginBottom: "2px",
+              }}
+            >
+              SESSION
+            </div>
+            <div style={styles.timerDisplay}>{timer.format()}</div>
+          </div>
+        )}
       </div>
 
       {problem.platformNotes && (

@@ -13,7 +13,7 @@ You MUST respond with ONLY a valid JSON object — no markdown, no backticks, no
 JSON structure:
 {
   "title": "Short question title",
-  "type": "concept|code_review|modeling",
+  "type": "concept|code_review|modeling|whiteboard_system|whiteboard_devops|whiteboard_lead",
   "difficulty": "Warm-up|Easy|Medium|Hard",
   "category": "Category name",
   "question": "The full interview question as the interviewer would ask it",
@@ -36,6 +36,9 @@ const screeningTypeInstructions = {
   concept: `Generate a CONCEPT COMPARISON question. The candidate must explain, compare, or differentiate technical concepts. Include code examples showing the difference. The answer must include when to use each option with real-world justification.`,
   code_review: `Generate a CODE REVIEW question. Present a realistic code snippet (15-30 lines) that has specific issues. The code should look plausible — like something a mid-level dev would write. Issues could include: performance problems, security flaws, SOLID violations, memory leaks, race conditions, or anti-patterns. The candidate must identify issues and refactor.`,
   modeling: `Generate a DATA MODELING or SYSTEM DESIGN question. Present a scenario (JSON structure, database schema, or architecture diagram described in text) and ask the candidate to critique, redesign, or build from scratch. Focus on real enterprise scenarios: banking, automotive, healthcare, logistics.`,
+  whiteboard_system: `WHITEBOARD system design: candidate sketches and narrates at the board; lead-level tradeoffs and failure modes.`,
+  whiteboard_devops: `WHITEBOARD DevOps/SRE/platform: pipelines, incidents, K8s paths, SLOs, IaC — verbal/board as in real panel.`,
+  whiteboard_lead: `WHITEBOARD / verbal tech lead scenarios: stakeholders, delivery conflict, mentoring, hiring — no code.`,
 } as const;
 
 export function buildScreeningPrompt(

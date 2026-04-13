@@ -4,7 +4,9 @@ import { exportProblemMarkdown } from "../utils/export";
 import { styles, ghostBtnStyle, primaryBtnStyle } from "../theme/tokens";
 import ProblemHeader from "./ProblemHeader";
 import ProblemDescription from "./ProblemDescription";
+import LocalIdePanel from "./LocalIdePanel";
 import HintDisplay from "./HintDisplay";
+import { suggestedIdeMinutes } from "../utils/suggestedIdeMinutes";
 import ProblemActions from "./ProblemActions";
 import SolutionDetails from "./SolutionDetails";
 import SeniorWisdom from "./SeniorWisdom";
@@ -57,6 +59,15 @@ export default function ProblemView({
 
       <ProblemDescription problem={problem} />
 
+      {!showFull && (
+        <div key={problem.title}>
+          <LocalIdePanel
+            suggestedMinutes={suggestedIdeMinutes(problem.difficulty)}
+            accentColor={platform.color}
+          />
+        </div>
+      )}
+
       <HintDisplay hints={revealedHints} />
 
       {!showFull && (
@@ -88,7 +99,9 @@ export default function ProblemView({
       {!showFull && (
         <div style={{ marginTop: "8px" }}>
           <div style={{ color: "#333", fontSize: "12px" }}>
-            Try it yourself first. The full guide unlocks when you are ready.
+            Try it yourself first. The header timer is the overall session clock; use the local IDE
+            stopwatch while you code and run tests elsewhere. The full guide unlocks when you are
+            ready.
           </div>
         </div>
       )}

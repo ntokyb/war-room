@@ -145,7 +145,65 @@ export const SCREENING_CATEGORIES: ScreeningCategory[] = [
       "File upload & storage design",
     ],
   },
+  /** Whiteboard + DevOps + tech-lead scenarios (senior / lead interviews). */
+  {
+    id: "whiteboard-system",
+    name: "Whiteboard — System & Scale",
+    color: "#a855f7",
+    icon: "▭",
+    topics: [
+      "Sketch end-to-end request path (CDN → API → DB → cache)",
+      "Design rate limiting for 50k RPS API",
+      "Multi-region read/write strategy for banking profile data",
+      "Real-time notifications at scale (fan-out, dedupe)",
+      "File upload pipeline: resumable, virus scan, storage tiers",
+      "Idempotency keys and exactly-once illusion at the board",
+      "Read vs write path optimization (CQRS sketch)",
+      "Session store: sticky vs shared state",
+      "Background job queue vs stream processing — when which",
+      "Capacity planning back-of-envelope for launch day",
+    ],
+  },
+  {
+    id: "devops-platform",
+    name: "DevOps & Platform (SRE)",
+    color: "#14b8a6",
+    icon: "◇",
+    topics: [
+      "CI/CD for regulated releases: gates, evidence, sign-off",
+      "Blue-green vs canary with database migrations",
+      "Container image scanning — fail build vs warn",
+      "K8s: Pod → Service → Ingress — explain traffic path",
+      "Secrets: rotation, vault pattern, least privilege",
+      "Incident response: first 15 minutes as incident commander",
+      "SLO/SLI/SLA for an internal REST dependency",
+      "Observability strategy for unknown-unknown outage",
+      "IaC drift: detect, prevent, remediate",
+      "Cost vs reliability levers you’d show leadership",
+    ],
+  },
+  {
+    id: "tech-leadership",
+    name: "Tech Lead & Stakeholder situations",
+    color: "#f472b6",
+    icon: "◐",
+    topics: [
+      "PM cuts scope mid-sprint — how you respond in the room",
+      "Two strong engineers disagree on architecture — facilitation",
+      "Critical path depends on underperforming teammate",
+      "Tech debt vs feature pressure — board-level framing",
+      "Blameless postmortem: facilitation and action items",
+      "Roadmap negotiation with product (evidence-based)",
+      "On-call load unfair — structural fix as lead",
+      "Mentoring plan for mid-level joining legacy monolith",
+      "Cross-team dependency blocking release — escalation path",
+      "Hiring bar: what you probe for senior vs staff in interview",
+    ],
+  },
 ];
+
+/** First N categories are “classic” screening; rest are whiteboard / lead tracks. */
+export const SCREENING_CORE_CATEGORY_COUNT = 8;
 
 export const SCREENING_TYPES: ScreeningTypeOption[] = [
   { id: "concept", name: "Concept Comparison", icon: "💡", color: "#ffe066" },
@@ -155,6 +213,24 @@ export const SCREENING_TYPES: ScreeningTypeOption[] = [
     name: "Architecture / Modeling",
     icon: "🏗",
     color: "#00c2ff",
+  },
+  {
+    id: "whiteboard_system",
+    name: "Whiteboard — System design",
+    icon: "▭",
+    color: "#a855f7",
+  },
+  {
+    id: "whiteboard_devops",
+    name: "Whiteboard — DevOps / ops",
+    icon: "◇",
+    color: "#14b8a6",
+  },
+  {
+    id: "whiteboard_lead",
+    name: "Whiteboard — Lead / process",
+    icon: "◐",
+    color: "#f472b6",
   },
 ];
 

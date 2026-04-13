@@ -69,6 +69,8 @@ Local interview prep app: **practice problems** (platform-style), **technical sc
 - **Cache**: Same platform/language/category/difficulty (or screening tuple) may return a cached item unless you enable **“New problem / New question (skip cache)”** in the config screens.
 - **Stats** in the header (solved / hinted / skipped / streak) are **persisted in `localStorage`** (`war-room-stats`).
 - **Rate limits** apply only to generation POSTs; listing history endpoints are not limited by the same middleware. Behind a reverse proxy, set **`TRUST_PROXY`** so per-IP limits are meaningful.
+- **No in-app editor**: practice and mock flows include a **local IDE stopwatch** and suggested minutes so you budget time to implement and run tests in your own environment. The header timer is the overall **session** clock only.
+- **Screening** includes **whiteboard / DevOps / tech-lead** categories and question types (`whiteboard_system`, `whiteboard_devops`, `whiteboard_lead`) with an on-screen **whiteboard prep** panel (3-minute sketch timer, narration tips). Generation prompts target senior IC, tech lead, and platform/SRE roles while answers stay “teach me like a junior.”
 
 ## Health check
 

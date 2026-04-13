@@ -11,7 +11,11 @@ import {
 } from "../theme/tokens";
 import CodeBlock from "./CodeBlock";
 import HintDisplay from "./HintDisplay";
+import LocalIdePanel from "./LocalIdePanel";
+import WhiteboardPrepPanel from "./WhiteboardPrepPanel";
 import ScreeningAnswer from "./ScreeningAnswer";
+import { suggestedIdeMinutes } from "../utils/suggestedIdeMinutes";
+import { isWhiteboardScreeningType } from "../utils/whiteboard";
 
 export default function ScreeningView({
   question,
@@ -63,7 +67,19 @@ export default function ScreeningView({
             {question.title}
           </div>
         </div>
-        <div style={styles.timerDisplay}>{timer.format()}</div>
+        <div style={{ textAlign: "right" }}>
+          <div
+            style={{
+              fontSize: sizes.fontXs,
+              color: colors.textGhost,
+              letterSpacing: "2px",
+              marginBottom: "2px",
+            }}
+          >
+            SESSION
+          </div>
+          <div style={styles.timerDisplay}>{timer.format()}</div>
+        </div>
       </div>
 
       {/* Context */}
@@ -77,6 +93,22 @@ export default function ScreeningView({
           }}
         >
           ⚡ {question.context}
+        </div>
+      )}
+
+      {!showAnswer && type.id === "code_review" && (
+        <div key={question.title}>
+          <LocalIdePanel
+            suggestedMinutes={suggestedIdeMinutes(question.difficulty)}
+            accentColor={category.color}
+            detail="Review and refactor in your editor — there is no code editor here."
+          />
+        </div>
+      )}
+
+      {!showAnswer && isWhiteboardScreeningType(type.id) && (
+        <div key={`wb-${question.title}`}>
+          <WhiteboardPrepPanel accentColor={type.color} />
         </div>
       )}
 

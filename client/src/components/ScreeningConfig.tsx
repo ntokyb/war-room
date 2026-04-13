@@ -1,6 +1,7 @@
 import { useState } from "react";
 import {
   SCREENING_CATEGORIES,
+  SCREENING_CORE_CATEGORY_COUNT,
   SCREENING_TYPES,
   SCREENING_DIFFICULTIES,
 } from "../constants/screening";
@@ -77,10 +78,11 @@ export default function ScreeningConfig({ onGenerated, onBack }) {
             marginBottom: "4px",
           }}
         >
-          🎯 Technical Screening
+          🎯 Screening & whiteboard
         </div>
         <div style={{ fontSize: "12px", color: "#555" }}>
-          Senior-level questions — explained like teaching a junior
+          Senior / lead / DevOps prep — questions at that bar, answers explained like you are a
+          junior (clear steps, analogies, what interviewers want to hear)
         </div>
       </div>
 
@@ -102,10 +104,50 @@ export default function ScreeningConfig({ onGenerated, onBack }) {
           display: "grid",
           gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
           gap: "8px",
+          marginBottom: "12px",
+        }}
+      >
+        {SCREENING_CATEGORIES.slice(0, SCREENING_CORE_CATEGORY_COUNT).map((cat) => (
+          <button
+            key={cat.id}
+            type="button"
+            onClick={() => handleCategoryChange(cat)}
+            style={{
+              background: category.id === cat.id ? `${cat.color}15` : "#111118",
+              border: `1px solid ${category.id === cat.id ? cat.color : "#1e1e30"}`,
+              borderRadius: "6px",
+              padding: "10px 14px",
+              cursor: "pointer",
+              color: category.id === cat.id ? cat.color : "#555",
+              fontSize: "11px",
+              fontWeight: 600,
+              textAlign: "left",
+            }}
+          >
+            {cat.icon} {cat.name}
+          </button>
+        ))}
+      </div>
+      <div
+        style={{
+          fontSize: "10px",
+          letterSpacing: "2px",
+          color: "#555",
+          marginBottom: "10px",
+          marginTop: "4px",
+        }}
+      >
+        WHITEBOARD · DEVOPS · TECH LEAD
+      </div>
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
+          gap: "8px",
           marginBottom: "28px",
         }}
       >
-        {SCREENING_CATEGORIES.map((cat) => (
+        {SCREENING_CATEGORIES.slice(SCREENING_CORE_CATEGORY_COUNT).map((cat) => (
           <button
             key={cat.id}
             type="button"

@@ -1,9 +1,9 @@
 const Screening = require("../models/Screening");
 const { parseClaudeJson } = require("../utils/parseClaudeJson");
 
-const SCREENING_SYSTEM_PROMPT = `You are a senior technical interviewer conducting a screening round for a developer with 10+ years of C#/.NET/Angular/SQL experience applying for senior/lead positions at banks (ABSA, Investec), automotive (Toyota), government, and enterprise companies.
+const SCREENING_SYSTEM_PROMPT = `You are a senior technical interviewer preparing candidates for SENIOR DEVELOPER, TECH LEAD, DEVOPS / PLATFORM / SRE, and hands-on ENGINEERING MANAGER roles — often in regulated enterprise (banking, automotive, government).
 
-ASK at a SENIOR level but EXPLAIN the answer like you are teaching a JUNIOR developer:
+ASK at a SENIOR / LEAD level but EXPLAIN the answer like you are teaching a JUNIOR developer:
 - Use real-world analogies and practical examples
 - Show before/after code where applicable
 - Explain WHY something matters, not just WHAT it is
@@ -16,16 +16,16 @@ You MUST respond with ONLY a valid JSON object — no markdown, no backticks, no
 JSON structure:
 {
   "title": "Short question title",
-  "type": "concept|code_review|modeling",
+  "type": "concept|code_review|modeling|whiteboard_system|whiteboard_devops|whiteboard_lead",
   "difficulty": "Warm-up|Easy|Medium|Hard",
   "category": "Category name",
   "question": "The full interview question as the interviewer would ask it",
   "context": "Setup context — why this question matters in a real interview",
-  "codeSnippet": "Code shown to candidate (for code_review type, empty string for others)",
+  "codeSnippet": "For code_review: 15–30 lines of code. For whiteboard_* types: optional ASCII diagram or bullet sketch (may be empty string). For concept/modeling: usually empty string.",
   "answer": {
     "summary": "One clear paragraph answer — what to say first",
     "detailed": "Full explanation with analogies, broken into clear sections. Use real-world comparisons. Explain like the candidate has never seen this before but needs to sound like a senior.",
-    "codeExample": "Complete runnable code demonstrating the concept. Show BAD code then GOOD code where applicable.",
+    "codeExample": "Runnable code where it fits (concept/code_review). For whiteboard scenarios: use structured text — e.g. labeled diagram in ASCII, pipeline steps, or stakeholder script — not necessarily compilable code.",
     "realWorldScenario": "A concrete scenario from banking/automotive/enterprise where this applies"
   },
   "whatInterviewersWant": "What the interviewer is really testing — the hidden criteria",
@@ -40,17 +40,23 @@ function buildScreeningPrompt(category, topic, type, difficulty) {
     concept: `Generate a CONCEPT COMPARISON question. The candidate must explain, compare, or differentiate technical concepts. Include code examples showing the difference. The answer must include when to use each option with real-world justification.`,
     code_review: `Generate a CODE REVIEW question. Present a realistic code snippet (15-30 lines) that has specific issues. The code should look plausible — like something a mid-level dev would write. Issues could include: performance problems, security flaws, SOLID violations, memory leaks, race conditions, or anti-patterns. The candidate must identify issues and refactor.`,
     modeling: `Generate a DATA MODELING or SYSTEM DESIGN question. Present a scenario (JSON structure, database schema, or architecture diagram described in text) and ask the candidate to critique, redesign, or build from scratch. Focus on real enterprise scenarios: banking, automotive, healthcare, logistics.`,
+    whiteboard_system: `Generate a WHITEBOARD SYSTEM DESIGN style prompt. The candidate is at a physical whiteboard (or virtual) with a principal/staff engineer. They must narrate components, data flow, failure modes, and tradeoffs. Question text should say explicitly they should sketch and talk through it (boxes, arrows, protocols). No IDE. Difficulty should reflect lead-level scope (scale, consistency, ops).`,
+    whiteboard_devops: `Generate a WHITEBOARD DEVOPS / PLATFORM / SRE scenario: CI/CD, incident response, K8s/network path, observability, SLOs, IaC, or release strategy. They explain at the board or verbally as in a real panel. Include what good sounds like for a senior platform engineer or tech lead owning production.`,
+    whiteboard_lead: `Generate a TECH LEAD / ENGINEERING MANAGEMENT situational prompt: stakeholders, conflict, prioritization, mentoring, hiring, postmortem facilitation, or cross-team delivery. No code required. Answer should model calm leadership, concrete frameworks, and what "strong senior / lead" sounds like — still explained simply for someone learning those behaviors.`,
   };
+
+  const instruction =
+    typeInstructions[type] || typeInstructions.concept;
 
   return `Category: ${category}
 Topic: ${topic}
 Question Type: ${type}
 Difficulty: ${difficulty}
-Type Instructions: ${typeInstructions[type] || typeInstructions.concept}
+Type Instructions: ${instruction}
 
 Generate a ${difficulty} "${type}" screening question about "${topic}" in the "${category}" domain.
-Target: Senior developer (10+ years C#/.NET/Angular/SQL).
-Explain answer: Like teaching a junior who needs to sound senior.
+Target audience: Senior IC, tech lead, DevOps/platform engineer, or lead stepping toward EM — must demonstrate depth appropriate to those roles.
+Explain answer: Like teaching a junior who must PERFORM at senior/lead level in the real interview.
 Return ONLY the JSON.`;
 }
 

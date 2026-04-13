@@ -9,7 +9,9 @@ import {
   primaryBtnStyle,
 } from "../theme/tokens";
 import HintDisplay from "./HintDisplay";
+import LocalIdePanel from "./LocalIdePanel";
 import ProblemDescription from "./ProblemDescription";
+import { suggestedIdeMinutes } from "../utils/suggestedIdeMinutes";
 import SolutionDetails from "./SolutionDetails";
 import SeniorWisdom from "./SeniorWisdom";
 
@@ -144,6 +146,15 @@ export default function MockActivePhase({
       )}
 
       <ProblemDescription problem={problem} />
+
+      {!showSolution && (
+        <div key={currentIndex}>
+          <LocalIdePanel
+            suggestedMinutes={suggestedIdeMinutes(problem.difficulty)}
+            accentColor={platform.color}
+          />
+        </div>
+      )}
 
       <HintDisplay hints={revealedHints} />
 
