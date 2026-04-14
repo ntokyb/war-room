@@ -1,5 +1,6 @@
 const crypto = require("crypto");
 const { getDb } = require("../config/db");
+const { getSuperUser } = require("../utils/appSession");
 
 const GUEST_USER_RE = /^[a-zA-Z0-9._@+-]{3,64}$/;
 
@@ -45,7 +46,7 @@ function create({ username: requestedUser, password: requestedPass } = {}) {
   let username = requestedUser?.trim();
   let password = requestedPass;
 
-  const superName = (process.env.WAR_ROOM_APP_USER || "").trim();
+  const superName = getSuperUser();
   if (username) {
     if (!GUEST_USER_RE.test(username)) {
       const err = new Error("Username must be 3–64 chars: letters, digits, ._@+-");

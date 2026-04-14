@@ -20,6 +20,7 @@ export default function AppAuthGate({ children }: { children: ReactNode }) {
   const [state, setState] = useState<GateState>({ phase: "loading" });
   const [loginError, setLoginError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [dismissAuthHint, setDismissAuthHint] = useState(false);
 
   const refresh = useCallback(() => {
     setState({ phase: "loading" });
@@ -264,7 +265,61 @@ export default function AppAuthGate({ children }: { children: ReactNode }) {
     role: state.role,
   };
 
+  const showAuthOffHint =
+    import.meta.env.DEV &&
+    state.phase === "ready" &&
+    !state.authRequired &&
+    !dismissAuthHint;
+
   return (
-    <AuthSurfaceContext.Provider value={surface}>{children}</AuthSurfaceContext.Provider>
+    <AuthSurfaceContext.Provider value={surface}>
+      {showAuthOffHint ? (
+        <div
+          style={{
+            position: "fixed",
+            bottom: 0,
+            left: 0,
+            right: 0,
+            zIndex: 10001,
+            background: "#2a1f00",
+            borderTop: "1px solid #ff9f0044",
+            color: "#e0e0f0",
+            fontFamily: "'JetBrains Mono', monospace",
+            fontSize: "11px",
+            padding: "12px 16px",
+            display: "flex",
+            flexWrap: "wrap",
+            alignItems: "center",
+            gap: "12px",
+            justifyContent: "space-between",
+          }}
+        >
+          <span style={{ lineHeight: 1.6, maxWidth: "720px" }}>
+            <strong style={{ color: "#ff9f00" }}>No login screen</strong> — the API reports app auth is
+            off. Add to <code style={{ color: "#00cfff" }}>server/.env</code>:{" "}
+            <code>WAR_ROOM_APP_USER</code>, <code>WAR_ROOM_APP_PASSWORD</code>,{" "}
+            <code>WAR_ROOM_SESSION_SECRET</code> (≥16 chars), then restart the server. Run client + server
+            together (<code>npm run dev</code> in <code>server/</code> and <code>client/</code>).
+          </span>
+          <button
+            type="button"
+            onClick={() => setDismissAuthHint(true)}
+            style={{
+              background: "transparent",
+              border: "1px solid #666",
+              color: "#888",
+              borderRadius: "4px",
+              padding: "6px 12px",
+              cursor: "pointer",
+              fontFamily: "inherit",
+              fontSize: "10px",
+            }}
+          >
+            DISMISS
+          </button>
+        </div>
+      ) : null}
+      {children}
+    </AuthSurfaceContext.Provider>
   );
 }

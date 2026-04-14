@@ -3,7 +3,7 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const { initDb } = require("./config/db");
-const { assertSecretIfAuthEnabled } = require("./utils/appSession");
+const { assertSecretIfAuthEnabled, isAppAuthEnabled } = require("./utils/appSession");
 const authRoutes = require("./routes/authRoutes");
 const requireAppSession = require("./middleware/requireAppSession");
 const problemRoutes = require("./routes/problemRoutes");
@@ -11,7 +11,6 @@ const screeningRoutes = require("./routes/screeningRoutes");
 const sessionRoutes = require("./routes/sessions.routes");
 const guestUsersRoutes = require("./routes/guestUsersRoutes");
 const requireSuperUser = require("./middleware/requireSuperUser");
-const { isAppAuthEnabled } = require("./utils/appSession");
 const errorHandler = require("./middleware/errorHandler");
 
 assertSecretIfAuthEnabled();
@@ -80,4 +79,11 @@ app.use(errorHandler);
 
 app.listen(PORT, () => {
   console.log(`War Room server running on http://localhost:${PORT}`);
+  if (isAppAuthEnabled()) {
+    console.log("[auth] Sign-in screen enabled (super user + guest passes).");
+  } else {
+    console.log(
+      "[auth] Sign-in screen disabled — no WAR_ROOM_APP_USER / WAR_ROOM_SUPER_USER. Set those plus WAR_ROOM_APP_PASSWORD (or WAR_ROOM_SUPER_PASSWORD) and WAR_ROOM_SESSION_SECRET to require login.",
+    );
+  }
 });

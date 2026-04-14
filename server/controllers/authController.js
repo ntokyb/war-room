@@ -6,6 +6,8 @@ const {
   clearSessionCookie,
   cookieOptions,
   readSession,
+  getSuperUser,
+  getSuperPassword,
 } = require("../utils/appSession");
 
 function status(req, res) {
@@ -28,8 +30,8 @@ function login(req, res) {
     res.status(400).json({ error: "App login is not configured" });
     return;
   }
-  const expectedUser = process.env.WAR_ROOM_APP_USER || "";
-  const expectedPass = process.env.WAR_ROOM_APP_PASSWORD || "";
+  const superUser = getSuperUser();
+  const expectedPass = getSuperPassword();
   if (!expectedPass) {
     res.status(500).json({ error: "Server misconfiguration" });
     return;
@@ -39,7 +41,6 @@ function login(req, res) {
   const username = typeof body.username === "string" ? body.username : "";
   const password = typeof body.password === "string" ? body.password : "";
 
-  const superUser = expectedUser.trim();
   if (
     timingSafeStringEq(username.trim(), superUser) &&
     timingSafeStringEq(password, expectedPass)

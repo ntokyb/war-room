@@ -3,6 +3,8 @@ services:
     build: ./server
     container_name: warroom-server
     restart: unless-stopped
+    # Create server/.env with at least WAR_ROOM_APP_USER, WAR_ROOM_APP_PASSWORD,
+    # WAR_ROOM_SESSION_SECRET (16+ chars) or the UI will stay open with no login.
     env_file: ./server/.env
     volumes:
       - sqlite-data:/app/data

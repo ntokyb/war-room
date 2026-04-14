@@ -23,9 +23,20 @@ function timingSafeStringEq(a, b) {
   }
 }
 
+/** Super login id (email or any string). Alias: WAR_ROOM_SUPER_USER */
+function getSuperUser() {
+  const u = process.env.WAR_ROOM_APP_USER || process.env.WAR_ROOM_SUPER_USER;
+  return typeof u === "string" ? u.trim() : "";
+}
+
+/** Super password. Alias: WAR_ROOM_SUPER_PASSWORD */
+function getSuperPassword() {
+  const p = process.env.WAR_ROOM_APP_PASSWORD ?? process.env.WAR_ROOM_SUPER_PASSWORD;
+  return p == null ? "" : String(p);
+}
+
 function isAppAuthEnabled() {
-  const u = process.env.WAR_ROOM_APP_USER;
-  return typeof u === "string" && u.trim().length > 0;
+  return getSuperUser().length > 0;
 }
 
 function getSessionSecret() {
@@ -37,14 +48,14 @@ function assertSecretIfAuthEnabled() {
   const s = getSessionSecret();
   if (!s || s.length < 16) {
     console.error(
-      "[auth] WAR_ROOM_APP_USER is set but WAR_ROOM_SESSION_SECRET is missing or shorter than 16 characters.",
+      "[auth] Super user is set but WAR_ROOM_SESSION_SECRET is missing or shorter than 16 characters.",
     );
     process.exit(1);
   }
-  const p = process.env.WAR_ROOM_APP_PASSWORD;
-  if (p == null || String(p).length === 0) {
+  const p = getSuperPassword();
+  if (!p || p.length === 0) {
     console.error(
-      "[auth] WAR_ROOM_APP_PASSWORD must be set when WAR_ROOM_APP_USER is set (super user).",
+      "[auth] Set WAR_ROOM_APP_PASSWORD (or WAR_ROOM_SUPER_PASSWORD) when using a super user.",
     );
     process.exit(1);
   }
@@ -144,6 +155,8 @@ module.exports = {
   SUPER_MAX_AGE_SEC,
   GUEST_MAX_AGE_SEC,
   timingSafeStringEq,
+  getSuperUser,
+  getSuperPassword,
   isAppAuthEnabled,
   assertSecretIfAuthEnabled,
   createSessionCookie,
