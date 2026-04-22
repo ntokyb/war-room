@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import AppAuthGate from "./components/AppAuthGate";
 import Header from "./components/Header";
+import BBDMockSession from "./components/BBDMockSession";
 import MockConfig from "./components/MockConfig";
 import MockSession from "./components/MockSession";
 import PlatformSelect from "./components/PlatformSelect";
@@ -212,6 +213,15 @@ function WarRoomApp() {
     setScreen("platform");
   };
 
+  const handleBBD = () => {
+    timer.stop();
+    setScreen("bbd");
+  };
+
+  const handleBBDFinish = () => {
+    setScreen("platform");
+  };
+
   return (
     <div
       style={{ minHeight: "100%", display: "flex", flexDirection: "column" }}
@@ -227,6 +237,7 @@ function WarRoomApp() {
         onCertifications={handleCertifications}
         onScreening={handleScreening}
         onMock={handleMock}
+        onBBD={handleBBD}
         screen={screen}
       />
       {screen === "certs" && <Certifications onBack={handleBackToPlatforms} />}
@@ -286,6 +297,7 @@ function WarRoomApp() {
       {screen === "mockSession" && mockConfig && (
         <MockSession config={mockConfig} onFinish={handleMockFinish} />
       )}
+      {screen === "bbd" && <BBDMockSession onFinish={handleBBDFinish} />}
     </div>
   );
 }

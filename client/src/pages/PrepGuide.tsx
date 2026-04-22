@@ -323,6 +323,141 @@ export default function PrepGuide({ onNavigate }: PrepGuideProps) {
           })}
         </div>
 
+        {/* A2 — Assessment-specific guides */}
+        <h2 style={sectionTitleStyle}>ASSESSMENT-SPECIFIC GUIDES</h2>
+        <article
+          style={{
+            background: "#0d0d16",
+            border: "1px solid #1e1e30",
+            borderLeft: "4px solid #2196f3",
+            borderRadius: "8px",
+            padding: "20px",
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "10px",
+              marginBottom: "14px",
+              flexWrap: "wrap",
+            }}
+          >
+            <span style={{ fontSize: "22px", color: "#2196f3" }}>◭</span>
+            <span
+              style={{
+                fontSize: "15px",
+                fontWeight: 700,
+                color: "#2196f3",
+                letterSpacing: "2px",
+              }}
+            >
+              BBD (HACKEREARTH) — WHAT TO EXPECT
+            </span>
+            <button
+              type="button"
+              onClick={() => onNavigate("bbd")}
+              style={{
+                marginLeft: "auto",
+                background: "#2196f320",
+                border: "1px solid #2196f3",
+                color: "#2196f3",
+                borderRadius: "6px",
+                padding: "6px 14px",
+                cursor: "pointer",
+                fontSize: "11px",
+                fontWeight: 700,
+                letterSpacing: "2px",
+                fontFamily: "inherit",
+              }}
+            >
+              ▶ RUN BBD SIM
+            </button>
+          </div>
+
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "auto 1fr",
+              columnGap: "16px",
+              rowGap: "8px",
+              fontSize: "12px",
+              color: "#ccc",
+              lineHeight: 1.7,
+              marginBottom: "18px",
+            }}
+          >
+            <span style={{ color: "#666", letterSpacing: "1px" }}>FORMAT</span>
+            <span>90 minutes, 2 sections, 3–4 coding problems</span>
+            <span style={{ color: "#666", letterSpacing: "1px" }}>PLATFORM</span>
+            <span>HackerEarth Recruit</span>
+            <span style={{ color: "#666", letterSpacing: "1px" }}>LANGUAGE</span>
+            <span>
+              Must change to <strong style={{ color: "#2196f3" }}>C#</strong>{" "}
+              manually at the start — do this first
+            </span>
+            <span style={{ color: "#666", letterSpacing: "1px" }}>COPY/PASTE</span>
+            <span style={{ color: "#ff5e7a" }}>
+              DISABLED — you must type all code
+            </span>
+            <span style={{ color: "#666", letterSpacing: "1px" }}>TAB SWITCH</span>
+            <span>Limited to 30 — stay in the window</span>
+            <span style={{ color: "#666", letterSpacing: "1px" }}>SUBMISSION</span>
+            <span style={{ color: "#ffe066" }}>
+              Click Submit after EACH question, not at the end
+            </span>
+          </div>
+
+          <div
+            style={{
+              fontSize: "11px",
+              color: "#888",
+              marginBottom: "6px",
+              letterSpacing: "1px",
+            }}
+          >
+            PROBLEM STYLE — STDIN/STDOUT
+          </div>
+          <pre style={codeBlockStyle}>{`int n = int.Parse(Console.ReadLine());
+var results = new StringBuilder();
+// process
+Console.Write(results);`}</pre>
+
+          <div
+            style={{
+              fontSize: "11px",
+              color: "#888",
+              marginBottom: "6px",
+              letterSpacing: "1px",
+            }}
+          >
+            TIME STRATEGY
+          </div>
+          <pre style={codeBlockStyle}>{`0–15  min  →  Section 1 warm-up — finish fast, bank time
+15–70 min  →  Problems 2 and 3 — your main score
+70–85 min  →  Problem 4 — partial credit counts
+85–90 min  →  Review and submit anything unsubmitted`}</pre>
+
+          <div
+            style={{
+              background: "#1a0808",
+              border: "1px solid #ff5e7a55",
+              borderLeft: "3px solid #ff5e7a",
+              borderRadius: "6px",
+              padding: "12px 14px",
+              fontSize: "12px",
+              color: "#ffb0bd",
+              lineHeight: 1.7,
+            }}
+          >
+            <strong style={{ color: "#ff5e7a" }}>
+              The #1 mistake: Not clicking Submit.
+            </strong>{" "}
+            A perfect solution that isn&apos;t submitted = 0 points. Submit
+            something for every problem, even if incomplete.
+          </div>
+        </article>
+
         {/* B — 3-week ramp */}
         <h2 style={sectionTitleStyle}>3-WEEK RAMP SCHEDULE</h2>
         <div

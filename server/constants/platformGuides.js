@@ -83,14 +83,22 @@ public IEnumerable<T> Filter<T>(IEnumerable<T> items, Func<T, bool> predicate)
 
   hackerearth: {
     scoringNotes: `HackerEarth is competitive-programming style. Problems are I/O heavy — you read from stdin and write to stdout, often processing multiple test cases in a loop. There is a strict time limit per test case (often 1-2 seconds). Wrong output = 0 points. Time limit exceeded = 0 points. The input format is precisely defined — misreading it wastes your entire attempt. Read the problem statement twice. Parse input exactly as described. Edge cases are brutal and intentional.`,
-    promptInjection: `This is a HackerEarth-style competitive programming problem. The solution MUST:
-- Read all input from Console.ReadLine() — parse exactly as the problem specifies
-- Write all output to Console.WriteLine() — no extra spaces, no extra newlines unless specified  
-- Handle multiple test cases in a loop if the problem specifies T test cases
-- Use StringBuilder for output when printing many lines (Console.WriteLine in a loop is slow)
-- The input parsing section in the step-by-step MUST show exactly how to read and parse the input
-- Time complexity must be explicitly stated — brute force will TLE on large inputs
-- The starter code must include the full Main() with input parsing skeleton`,
+    promptInjection: `This is a HackerEarth-style problem as used in BBD Software's technical assessment.
+The solution MUST:
+- Read ALL input from Console.ReadLine() — parse exactly as the problem specifies
+- Write ALL output to Console.WriteLine() or Console.Write()
+- Handle multiple test cases in a loop when T test cases are specified
+- Use StringBuilder for output when printing many lines (faster than repeated Console.WriteLine)
+- Include the FULL Main() method with input parsing
+- The starter code must show exactly how to read the input format
+- Time complexity must be stated — O(n²) will TLE on large inputs
+- The step-by-step must include a "stdin/stdout parsing" step as step 1
+
+IMPORTANT for BBD assessment context:
+- Candidates cannot copy/paste — they type code manually
+- Therefore: keep solutions clean, no complex one-liners
+- Favour readable variable names over brevity
+- The solution should be something a developer can type from memory under pressure`,
     timeFormat: `Full program. Read T test cases from stdin. Write T answers to stdout.`,
     exampleStructure: `static void Main(string[] args) {
   int t = int.Parse(Console.ReadLine());

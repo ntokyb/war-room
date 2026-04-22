@@ -13,6 +13,7 @@ export default function Header({
   onCertifications,
   onScreening,
   onMock,
+  onBBD,
   screen,
 }) {
   const authSurface = useContext(AuthSurfaceContext);
@@ -129,6 +130,21 @@ export default function Header({
           )}
         >
           MOCK
+        </button>
+        <button
+          type="button"
+          onClick={onBBD}
+          style={{
+            ...navBtnStyle(screen === "bbd", "#2196f3"),
+            color: screen === "bbd" ? "#2196f3" : "#2196f3",
+            fontWeight: 700,
+            border: screen === "bbd" ? "1px solid #2196f3" : "1px solid #2196f355",
+            borderRadius: "4px",
+            padding: "4px 10px",
+            background: screen === "bbd" ? "#2196f322" : "#2196f310",
+          }}
+        >
+          BBD PREP
         </button>
         {authSurface?.role === "super" ? (
           <button
