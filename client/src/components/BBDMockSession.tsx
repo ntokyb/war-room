@@ -86,9 +86,17 @@ export default function BBDMockSession({ onFinish }: BBDMockSessionProps) {
   const [error, setError] = useState<string | null>(null);
 
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const problemStartRef = useRef<number>(Date.now());
+  // Remaining-seconds snapshot at the moment the current problem tab was entered.
+  // Using `remaining` (not Date.now) keeps the component pure and good enough
+  // at 1-second granularity, matching the countdown tick.
+  const problemEnterRemainingRef = useRef<number>(TOTAL_SECONDS);
+  const remainingRef = useRef<number>(TOTAL_SECONDS);
 
   const allChecked = CHECKLIST_ITEMS.every((c) => checks[c.id]);
+
+  useEffect(() => {
+    remainingRef.current = remaining;
+  }, [remaining]);
 
   useEffect(() => {
     return () => {
@@ -97,7 +105,10 @@ export default function BBDMockSession({ onFinish }: BBDMockSessionProps) {
   }, []);
 
   const recordCurrentTime = () => {
-    const elapsed = Math.floor((Date.now() - problemStartRef.current) / 1000);
+    const elapsed = Math.max(
+      0,
+      problemEnterRemainingRef.current - remainingRef.current,
+    );
     setProblems((prev) => {
       if (!prev.length) return prev;
       const next = [...prev];
@@ -110,7 +121,7 @@ export default function BBDMockSession({ onFinish }: BBDMockSessionProps) {
       }
       return next;
     });
-    problemStartRef.current = Date.now();
+    problemEnterRemainingRef.current = remainingRef.current;
   };
 
   const endSession = () => {
@@ -179,7 +190,8 @@ export default function BBDMockSession({ onFinish }: BBDMockSessionProps) {
     setProblems(loaded);
     setCurrentIndex(0);
     setRemaining(TOTAL_SECONDS);
-    problemStartRef.current = Date.now();
+    remainingRef.current = TOTAL_SECONDS;
+    problemEnterRemainingRef.current = TOTAL_SECONDS;
     setPhase("active");
 
     if (timerRef.current != null) clearInterval(timerRef.current);
