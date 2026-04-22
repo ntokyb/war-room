@@ -1,46 +1,136 @@
-# War Room — Cursor context
+# War Room — Cursor Context
 
-## Production Environment
-- Live at: https://warroom.codist.co.za
+## Product
+Interview prep platform with two modes:
+- Practice Mode (LeetCode/HackerRank style)
+- Screening Mode (technical interview questions)
+AI powered by Anthropic Claude
+(claude-sonnet-4-20250514)
+
+## Stack
+- Frontend: React 19, Vite, TypeScript,
+  vanilla CSS dark theme, JetBrains Mono
+- Backend: Node.js, Express 4 (CommonJS)
+- Database: SQLite via better-sqlite3,
+  WAL mode
+- AI: Anthropic Claude API,
+  server-side proxy with cache-first
+- Docker: multi-stage nginx build for
+  client, Node Alpine for server
+
+## Deployment
+- Domain: https://warroom.codist.co.za
 - Server: Hetzner VPS 65.109.7.45
-- App dir: /opt/warroom (user: warroom)
-- Containers: warroom-server (port 5050), warroom-client (port 3080)
-- Network: warroom-network (isolated from Billable)
-- Database: SQLite via better-sqlite3 (WAL mode), volume: warroom_sqlite-data
-- CI/CD: push to main → GitHub Actions → auto deploy
-- Workflow: .github/workflows/deploy.yml
-- Nginx: warroom.codist.co.za → 127.0.0.1:3080
-- SSL: Let's Encrypt (auto-renews)
-- Shared VPS with Billable (app.mybillable.co.za) — fully isolated
+- App dir: /opt/warroom
+- App user: warroom
+- Shared VPS with Billable
+  (app.mybillable.co.za)
+- Isolated: separate user, network,
+  port from Billable
 
-## Deploy process
-docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+## Container layout (CRITICAL)
+Server WORKDIR is /app NOT /app/server
+  /app/index.js          entry point
+  /app/controllers/      route handlers
+  /app/middleware/       middleware
+  /app/models/           SQLite models
+  /app/routes/           route definitions
+  /app/utils/            utilities
+  /app/config/db.js      SQLite config
+  /app/constants/        platform guides
+  /app/data/warroom.db   SQLite database
 
-## Never touch
-- /etc/nginx/sites-available/warroom (nginx config)
-- Billable containers or network
-- warroom_sqlite-data volume directly
+Client: nginx build at 127.0.0.1:3080:80
+  (prod override to avoid port 80 conflict
+   with host nginx)
 
-## Roadmap
+## Docker Compose
+Base:    /opt/warroom/docker-compose.yml
+Prod:    /opt/warroom/docker-compose.prod.yml
+Start:   docker compose
+           -f docker-compose.yml
+           -f docker-compose.prod.yml
+           up -d
 
-| Phase | Status |
-|-------|--------|
-| 0 — Fix foundation, split components | ✅ Done |
-| 1 — MongoDB caching | ⏭ Skipped — SQLite is enough |
-| 2 — Session history + dashboard | 🔲 Next |
-| 3 — Favourites + notes | 🔲 After that |
-| 4 — Docker | ✅ Done |
-| 5 — Hetzner deploy + CI/CD | ✅ Done |
+## BusyBox grep (IMPORTANT)
+Container uses BusyBox grep.
+--include flag is NOT supported.
+Use: grep -r "pattern" /app/dir/
+NOT: grep -r "pattern" --include="*.js"
 
-Phase 2 is the next real unlock.
+## Auth system
+Files exist in repo and image:
+  server/utils/appSession.js
+  server/middleware/requireAppSession.js
+  server/middleware/requireSuperUser.js
+  server/controllers/authController.js
+  server/controllers/guestUsersController.js
+  client/src/components/AppAuthGate.tsx
+  client/src/components/GuestPassesModal.tsx
+  client/src/context/AuthSurfaceContext.tsx
 
-Right now stats reset every refresh. Session history means:
-- Every problem attempt saved — platform, category, difficulty, time taken, solved/skipped
-- A dashboard for weak spots — where you skip most, which platforms you’re slow on
-- Visibility into improvement night over night
+Auth activated by env vars in
+/opt/warroom/server/.env:
+  WAR_ROOM_APP_USER=ntoko
+  WAR_ROOM_APP_PASSWORD=<password>
+  WAR_ROOM_SESSION_SECRET=<hex>
+  COOKIE_SECURE=1
 
-That turns War Room from a practice tool into a coaching tool — drill next from your own data.
+isAppAuthEnabled() checks if
+WAR_ROOM_APP_USER is set.
+If not set — app is open to anyone.
+If set — sign-in screen enforced.
 
-## Coding expectations
-- Match existing stack: React (Vite) client, Express server, SQLite (better-sqlite3).
-- Do not suggest editing production nginx, Billable, or the SQLite volume by hand unless the user explicitly asks for runbook-only instructions.
+Super user can mint guest passes
+(3hr expiry) via GUEST PASSES button
+in header (only visible when logged
+in as super user).
+
+## CI/CD
+Repo:    github.com/ntokyb/war-room
+Branch:  main → auto deploys
+Needs:   ci job must pass first
+         deploy job blocked if ci fails
+
+Deploy script on server:
+  cd /opt/warroom
+  git fetch origin main
+  git reset --hard origin/main
+  docker compose -f docker-compose.yml
+    -f docker-compose.prod.yml
+    build --no-cache
+  docker compose -f docker-compose.yml
+    -f docker-compose.prod.yml up -d
+  docker image prune -f
+
+## Environment
+/opt/warroom/server/.env contains:
+  ANTHROPIC_API_KEY
+  PORT=5050
+  WAR_ROOM_APP_USER
+  WAR_ROOM_APP_PASSWORD
+  WAR_ROOM_SESSION_SECRET
+  COOKIE_SECURE=1
+
+## Certifications tab
+Added Apr 2026. Full roadmap:
+AZ-900 → AZ-204 → AZ-400 →
+AZ-104 → AZ-305 → TOGAF
+30 AZ-900 flashcards built in.
+localStorage persistence for
+progress, mastery, exam dates.
+
+## SQLite backup
+Script: /home/billable/backup-warroom.sh
+Runs: 2:30am daily via cron
+Keeps: 14 days of backups
+
+## Do not
+- Edit production nginx by hand
+  unless explicitly asked
+- Modify Billable containers
+  (separate app, separate user)
+- Use --include flag with grep
+  inside the container
+- Run migrations inside the container
+  (no .NET SDK — runtime only)
